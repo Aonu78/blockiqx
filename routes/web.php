@@ -17,7 +17,10 @@ Route::prefix('admin')->group(function () {
     Route::get('/staff', [AdminController::class, 'staffIndex'])->name('admin.staff');
     Route::get('/analytics', [AdminController::class, 'analyticsIndex'])->name('admin.analytics');
     Route::get('/map', [AdminController::class, 'mapIndex'])->name('admin.map');
-    
+    Route::get('/settings', [AdminController::class, 'settingsIndex'])->name('admin.settings');
+    Route::post('/settings', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    });
+
     // Actions for web dashboard
     Route::post('/reports/{report}/assign', [AdminController::class, 'assignReport'])->name('admin.reports.assign');
     Route::post('/staff/create', [AdminController::class, 'createOutreachMember'])->name('admin.staff.create');

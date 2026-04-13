@@ -159,20 +159,40 @@ class AdminController extends Controller
             ->select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')
             ->get();
 
-        return response()->json([
+            return response()->json([
             'reports' => $reports,
             'staff' => $staff
-        ]);
-    }
+            ]);
+            }
 
-    public function getOutreachPerformance()
-    {
-        $performance = Staff::withCount(['reports' => function($query) {
-            $query->where('status', 'Completed');
-        }])->get();
+            // Admin Settings
+            public function settingsIndex()
+            {
+            $adminUser = Auth::user(); // Assuming admin uses the 'web' guard
+            return view('admin.settings', compact('adminUser'));
+            }
 
-        return response()->json($performance);
-    }
+            public function updateProfile(Request $request)
+            {
+            $user = Auth::user();
+
+            $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed', // Password is optional
+            ]);
+
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            if (!empty($validatedData['password'])) {
+            $user->password = bcrypt($validatedData['password']);
+            }
+
+            $user->save();
+
+            return redirect()->route('admin.settings')->with('success', 'Profile updated successfully!');
+            }
+            }
 
     public function getAllUsers()
     {
