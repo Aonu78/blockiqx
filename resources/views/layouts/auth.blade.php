@@ -25,13 +25,6 @@
             <div class="page-header min-vh-75">
                 <div class="container">
                     <div class="row">
-                        <div class="col-xl-4 d-none d-lg-block d-flex">
-                            <div class="position-relative h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url({{ asset('assets/img/illustrations/illustration-auth.jpg') }}); background-size: cover;">
-                                <span class="mask bg-gradient-primary opacity-4"></span>
-                                <h4 class="mt-5 text-white font-weight-bolder position-relative">"Attention is the new currency"</h4>
-                                <p class="text-white position-relative">The more effortless the writing process design, the more compelling the final output.</p>
-                            </div>
-                        </div>
                         <div class="col-xl-8 col-md-7 d-flex flex-column ms-md-auto d-flex justify-content-center">
                             {{-- Dynamically load content from child views (login, register) --}}
                             @yield('content')
