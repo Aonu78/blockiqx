@@ -134,10 +134,60 @@
         </div>
     </div>
 </div>
-@endsection
+
+{{-- Inline Styles for the dashboard design --}}
+<style>
+.card-blog {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: none; /* Remove default card border if any */
+}
+.card-blog:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+.card-blog .icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px; /* Adjust to lift icon slightly above card */
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.card-blog .icon i {
+    font-size: 1.5rem; /* Adjust icon size */
+}
+.card-blog h5 {
+    font-weight: 700;
+    color: #344767; /* Darker text for headings */
+}
+.card-blog p {
+    color: #67748e; /* Softer text for descriptions */
+}
+.card-blog .text-decoration-none {
+    text-decoration: none !important;
+}
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Specific color adjustments for cards */
+.card-blog-success { background: linear-gradient(195deg, #66BB6A, #4CAF50); }
+.card-blog-info { background: linear-gradient(195deg, #4FC3F7, #03A9F4); }
+.card-blog-dark { background: linear-gradient(195deg, #344767, #1A202C); }
+.card-blog-warning { background: linear-gradient(195deg, #FFA726, #FF9800); }
+.card-blog-primary { background: linear-gradient(195deg, #6E78E8, #3F51B5); } /* Soft UI primary */
+</style>
 
 {{-- Chart.js Initialization Script --}}
-<script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+{{-- Chart.js is assumed to be loaded by the layout's soft-ui-dashboard.min.js --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Helper function to fetch data and render chart
@@ -152,7 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const ctx = document.getElementById(canvasId).getContext('2d');
                 
-                // Ensure dataKey exists and is an array, adapt labels dynamically
                 const chartDataPoints = data[dataKey];
                 if (!chartDataPoints || !Array.isArray(chartDataPoints)) {
                     console.error(`Data key "${dataKey}" not found or is not an array in API response.`);
@@ -160,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
+                // Adapt labels based on data structure. For reports-overview, data is structured by_status/by_type. For area-insights, it's directly array of {location, count}.
                 const labels = chartDataPoints.map(item => item.label || item.incident_type || item.status || item.location);
                 const counts = chartDataPoints.map(item => item.count);
 
@@ -202,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const areaColors = ['rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 99, 132, 0.6)'];
 
     // Render Reports by Status Chart (Pie Chart)
-    // Use specific API endpoint for reports-overview which returns by_status data
     fetchAndRenderChart('reportsByStatusChart', '/api/admin/analytics/reports-overview', 'pie', 'Reports by Status', 'by_status', statusColors);
 
     // Render Reports by Incident Type Chart (Bar Chart)
