@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <div class="row justify-content-center" style="border: 1px solid;border-radius: 20px;">
+        <div class="col-md-12">
             <div class="card card-plain">
                 <div class="card-header text-center pb-0">
                     <h4 class="font-weight-bolder text-dark text-gradient">Join us today</h4>
