@@ -18,7 +18,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="bi bi-collection text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-folder text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="bi bi-globe text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-globe text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="bi bi-award text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-file-alt text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="bi bi-cart text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="fas fa-shopping-cart text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 
 {{-- Inline Styles for the dashboard design --}}
 <style>
@@ -188,7 +188,6 @@
 </style>
 
 {{-- Chart.js Initialization Script --}}
-{{-- Chart.js is assumed to be loaded by the layout's soft-ui-dashboard.min.js --}}
 <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

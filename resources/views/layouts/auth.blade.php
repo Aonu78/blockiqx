@@ -14,8 +14,8 @@
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ922PyzASgjkaIS9z9gE3uD4/g9k2s+f3b7E9m1jC5g8r/Jp4t5uK9U/F0b1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('assets/css/soft-ui-dashboard.css?v=1.0.3') }}" rel="stylesheet" />
 </head>
@@ -25,6 +25,13 @@
             <div class="page-header min-vh-75">
                 <div class="container">
                     <div class="row">
+                        <div class="col-xl-4 d-none d-lg-block d-flex">
+                            <div class="position-relative h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url({{ asset('assets/img/illustrations/illustration-auth.jpg') }}); background-size: cover;">
+                                <span class="mask bg-gradient-primary opacity-4"></span>
+                                <h4 class="mt-5 text-white font-weight-bolder position-relative">"Attention is the new currency"</h4>
+                                <p class="text-white position-relative">The more effortless the writing process design, the more compelling the final output.</p>
+                            </div>
+                        </div>
                         <div class="col-xl-8 col-md-7 d-flex flex-column ms-md-auto d-flex justify-content-center">
                             {{-- Dynamically load content from child views (login, register) --}}
                             @yield('content')
