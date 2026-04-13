@@ -10,7 +10,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Authentication routes for community users
+// Authentication routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
@@ -24,6 +24,7 @@ Route::prefix('admin')->middleware('auth:web')->group(function () {
     Route::get('/', function () {
         return view('admin');
     })->name('admin.dashboard');
+
 
     Route::get('/reports', [AdminController::class, 'reportsIndex'])->name('admin.reports');
     Route::get('/users', [AdminController::class, 'usersIndex'])->name('admin.users');
