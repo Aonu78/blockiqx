@@ -110,13 +110,20 @@ class AdminController extends Controller
 
     public function mapIndex()
     {
-        return view('admin.map');
+        // Fetch distinct incident types and statuses for filter options
+        $incidentTypes = Report::distinct('incident_type')->pluck('incident_type');
+        $statuses = Report::distinct('status')->pluck('status');
+        // Fetch organizations for filtering
+        $organizations = Organization::all();
+
+        return view('admin.map', compact('incidentTypes', 'statuses', 'organizations'));
     }
 
     public function getMapView(Request $request)
     {
-        $query = Report::whereNotNull('latitude')->whereNotNull('longitude');
+        $query = Report::query();
 
+        // Apply filters
         if ($request->has('status') && $request->status != 'all') {
             $query->where('status', $request->status);
         }
@@ -132,11 +139,23 @@ class AdminController extends Controller
         if ($request->has('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
+        
+        if ($request->has('organization_id') && $request->organization_id != 'all') {
+            $query->where('organization_id', $request->organization_id);
+        }
 
-        $reports = $query->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description')->get();
+        // Select and fetch reports with coordinates and relevant details
+        $reports = $query->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')
+            ->get();
 
-        $staff = Staff::whereNotNull('location') // Assuming we might store coordinates for staff later
-            ->select('id', 'name', 'location')
+        // Fetch staff with their locations (assuming staff has latitude/longitude if needed)
+        // For now, using the string location field as defined in staff model.
+        // If staff also have lat/long, they should be fetched and returned here.
+        $staff = Staff::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')
             ->get();
 
         return response()->json([

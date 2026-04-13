@@ -50,9 +50,15 @@ class StaffController extends Controller
 
         $report->update($validatedData);
 
-        broadcast(new \App\Events\ReportStatusUpdated($report))->toOthers();
+        // Capture coordinates if status is 'Completed' and coordinates are available
+        if ($validatedData['status'] === 'Completed' && $request->has('latitude') && $request->has('longitude')) {
+            $report->update([
+                'resolved_at_latitude' => $request->latitude,
+                'resolved_at_longitude' => $request->longitude,
+            ]);
+        }
 
-        if ($request->wantsJson()) {
+        broadcast(new \App\Events\ReportStatusUpdated($report))->toOthers();
             return response()->json([
                 'message' => 'Report status updated successfully',
                 'report' => $report
@@ -64,13 +70,33 @@ class StaffController extends Controller
 
     public function addFieldNotes(Request $request, Report $report)
     {
-        // This functionality will be implemented in a future step.
-        return response()->json(['message' => 'Functionality not yet implemented.'], 501);
+        $validatedData = $request->validate([
+            'notes' => 'required|string',
+        ]);
+
+        $notes = $report->notes ?? []; // Get existing notes or initialize empty array
+        $notes[] = ['user_id' => Auth::guard('staff')->id(), 'note' => $validatedData['notes'], 'timestamp' => now()]; // Add new note with staff ID and timestamp
+        
+        $report->update(['notes' => $notes]);
+
+        return response()->json(['message' => 'Note added successfully', 'report' => $report]);
     }
 
     public function uploadMedia(Request $request, Report $report)
     {
-        // This functionality will be implemented in a future step.
-        return response()->json(['message' => 'Functionality not yet implemented.'], 501);
+        $validatedData = $request->validate([
+            'media.*' => 'required|file|mimes:jpg,jpeg,png,mp4,mov|max:20480', // Max 20MB per file
+        ]);
+
+        $mediaPaths = $report->media_paths ?? []; // Get existing paths or initialize empty array
+
+        foreach ($request->file('media') as $file) {
+            $path = $file->store('reports/media', 'public');
+            $mediaPaths[] = $path;
+        }
+        
+        $report->update(['media_paths' => $mediaPaths]);
+
+        return response()->json(['message' => 'Media uploaded successfully', 'report' => $report]);
     }
 }

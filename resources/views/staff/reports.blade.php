@@ -38,11 +38,13 @@
                                         <ul class="dropdown-menu">
                                           @foreach(['Arrived at location', 'Work started', 'In Progress', 'Completed'] as $status)
                                           <li>
-                                              <form action="{{ route('staff.reports.status', $report->id) }}" method="POST">
+                                              <form id="status-update-form-{{ $report->id }}" action="{{ route('staff.reports.status', $report->id) }}" method="POST">
                                                   @csrf
                                                   @method('PUT')
                                                   <input type="hidden" name="status" value="{{ $status }}">
-                                                  <button type="submit" class="dropdown-item">{{ $status }}</button>
+                                                  <input type="hidden" name="latitude" id="staff_latitude">
+                                                  <input type="hidden" name="longitude" id="staff_longitude">
+                                                  <button type="button" class="dropdown-item" onclick="updateReportStatus({{ $report->id }}, '{{ $status }}')">{{ $status }}</button>
                                               </form>
                                           </li>
                                           @endforeach
@@ -64,4 +66,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateReportStatus(reportId, status) {
+        const form = document.getElementById('status-update-form-' + reportId);
+        form.querySelector('input[name="status"]').value = status;
+
+        if (status === 'Completed' || status === 'Arrived at location') { 
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        form.querySelector('#staff_latitude').value = position.coords.latitude;
+                        form.querySelector('#staff_longitude').value = position.coords.longitude;
+                        form.submit();
+                    },
+                    (error) => {
+                        console.error("Error getting location: ", error);
+                        alert('Could not get your location. Please enable location services or try again.');
+                        // Optionally submit without coordinates if location is not strictly required for all updates
+                        // form.submit(); 
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Options for accuracy and freshness
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+                // Optionally submit without coordinates
+                // form.submit();
+            }
+        } else {
+            // If not a location-sensitive status update, submit directly
+            form.submit();
+        }
+    }
+</script>
 @endsection

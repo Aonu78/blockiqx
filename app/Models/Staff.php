@@ -24,6 +24,8 @@ class Staff extends Authenticatable
         'password',
         'organization_id',
         'location',
+        'latitude',
+        'longitude',
     ];
 
     public function reports()
