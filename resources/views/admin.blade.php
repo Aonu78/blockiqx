@@ -18,7 +18,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="ni ni-collection text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="bi bi-collection text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="ni ni-world text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="bi bi-globe text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="ni ni-badge text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="bi bi-award text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="col-4 text-end">
                             <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                                <i class="ni ni-chart-bar-32 text-lg opacity-10" aria-hidden="true"></i>
+                                <i class="bi bi-cart text-lg opacity-10" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -134,6 +134,7 @@
         </div>
     </div>
 </div>
+@endsection
 
 {{-- Inline Styles for the dashboard design --}}
 <style>
@@ -188,6 +189,7 @@
 
 {{-- Chart.js Initialization Script --}}
 {{-- Chart.js is assumed to be loaded by the layout's soft-ui-dashboard.min.js --}}
+<script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Helper function to fetch data and render chart
@@ -209,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                // Adapt labels based on data structure. For reports-overview, data is structured by_status/by_type. For area-insights, it's directly array of {location, count}.
                 const labels = chartDataPoints.map(item => item.label || item.incident_type || item.status || item.location);
                 const counts = chartDataPoints.map(item => item.count);
 
