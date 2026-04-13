@@ -22,31 +22,23 @@
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
-
-  @vite(['resources/css/app.css', 'resources/js/app.jsx'])
 </head>
 
 <body class="g-sidenav-show  bg-gray-100  ">
       
+  @include('components.sidebar')
 
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
-  <div class="sidenav-header">
-    <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-    <a class="align-items-center d-flex m-0 navbar-brand text-wrap" href="https://soft-ui-dashboard-laravel.creative-tim.com/dashboard">
-        <img src="../assets/img/logo-ct.png" class="navbar-brand-img h-100" alt="...">
-        <span class="ms-3 font-weight-bold">Soft UI Dashboard Laravel</span>
-    </a>
-  </div>
-  <hr class="horizontal dark mt-0">
-  <div class="collapse navbar-collapse  w-auto" id="sidenav-collapse-main">
-    
-  </div>
- 
-</aside>
-<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
-    <div id="app"></div>
-</main>
+  <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
 
+    @include('components.navbar')
+
+    <div class="container-fluid py-4">
+      @yield('content')
+    </div>
+
+    @include('components.footer')
+
+  </main>
 
     
       <!--   Core JS Files   -->
