@@ -13,12 +13,28 @@ class Report extends Model
         'email',
         'phone_number',
         'incident_type',
+        'category',
+        'concern_level',
         'description',
         'location',
+        'latitude',
+        'longitude',
+        'media_paths',
         'media_path',
         'status',
         'user_id',
+        'organization_id',
         'is_anonymous',
+    ];
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    protected $casts = [
+        'media_paths' => 'array',
+        'is_anonymous' => 'boolean',
     ];
 
     public function user()

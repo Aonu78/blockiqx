@@ -6,21 +6,35 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class Staff extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
-     *
+...
+
      * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'organization_id',
+        'location',
     ];
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'assigned_to');
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
