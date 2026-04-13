@@ -134,7 +134,7 @@
         </div>
     </div>
 </div>
-@endsection
+
 
 {{-- Inline Styles for the dashboard design --}}
 <style>
