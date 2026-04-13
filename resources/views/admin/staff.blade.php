@@ -44,17 +44,51 @@
                                         <a href="#" class="mx-2" data-bs-toggle="tooltip" data-bs-original-title="Edit staff">
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                                        {{-- Reset Password Button --}}
+                                        <button type="button" class="btn btn-link p-0 m-0" data-bs-toggle="modal" data-bs-target="#resetPasswordModal{{ $member->id }}" data-bs-original-title="Reset Password">
+                                            <i class="fas fa-key text-primary"></i>
+                                        </button>
+                                        </div>
+                                        </td>
+                                        </tr>
+
+                                        {{-- Reset Password Modal --}}
+                                        <div class="modal fade" id="resetPasswordModal{{ $member->id }}" tabindex="-1" role="dialog" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="resetPasswordModalLabel">Reset Password for {{ $member->name }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('admin.staff.reset-password', $member->id) }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body text-start">
+                                                <div class="form-group">
+                                                    <label for="password">New Password</label>
+                                                    <input type="password" class="form-control" name="password" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="password_confirmation">Confirm New Password</label>
+                                                    <input type="password" class="form-control" name="password_confirmation" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn bg-gradient-primary">Reset Password</button>
+                                            </div>
+                                        </form>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        @endforeach
+                                        </tbody>
+                                        </table>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        </div>
+                                        @endsection
 
 <!-- Modal for New Staff -->
 <div class="modal fade" id="newStaffModal" tabindex="-1" role="dialog" aria-labelledby="newStaffModalLabel" aria-hidden="true">

@@ -40,6 +40,7 @@ Route::prefix('admin')->middleware('auth:web')->group(function () {
     Route::put('/staff/{staff}/update', [AdminController::class, 'updateStaff'])->name('admin.staff.update');
     Route::post('/users/{user}/promote', [AdminController::class, 'promoteUserToStaff'])->name('admin.users.promote');
     Route::get('/staff/{staff}/impersonate', [AdminController::class, 'impersonateStaff'])->name('admin.staff.impersonate');
+    Route::post('/staff/{staff}/reset-password', [AdminController::class, 'resetStaffPassword'])->name('admin.staff.reset-password');
 });
 
 // Staff routes - protected by 'staff' guard
