@@ -52,7 +52,7 @@
       <li class="nav-item">
         <a class="nav-link {{ Route::currentRouteName() == 'admin.settings' ? 'active' : '' }}" href="{{ route('admin.settings') }}">
           <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="ni ni-settings-gear-65 {{ Route::currentRouteName() == 'admin.settings' ? 'text-white' : 'text-dark' }}" style="font-size: 12px;"></i>
+            <i class="fas fa-cog {{ Route::currentRouteName() == 'admin.settings' ? 'text-white' : 'text-dark' }}" style="font-size: 12px;"></i>
           </div>
           <span class="nav-link-text ms-1">Settings</span>
         </a>
