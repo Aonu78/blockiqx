@@ -8,31 +8,70 @@ use App\Models\Staff;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Notifications\ReportAssigned;
+use App\Notifications\ReportActivityNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route; // Although not used directly in this controller, it's good practice if routes are referenced.
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AdminController extends Controller
 {
     // Methods for displaying admin views
     public function reportsIndex()
     {
-        $reports = Report::all();
-        return view('admin.reports', compact('reports'));
+        $reports = Report::with(['organization', 'assignedStaff'])->latest()->get();
+        $staffMembers = Staff::with('organization')->orderBy('name')->get();
+
+        return view('admin.reports', compact('reports', 'staffMembers'));
+    }
+
+    public function showReport(Report $report)
+    {
+        $report->load(['organization', 'assignedStaff', 'user']);
+        $staffMembers = Staff::with('organization')->orderBy('name')->get();
+
+        return view('admin.report-show', compact('report', 'staffMembers'));
     }
 
     public function usersIndex()
     {
-        $users = User::all();
+        $users = User::latest()->get();
         return view('admin.users', compact('users'));
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+
+        if (!empty($validatedData['password'])) {
+            $user->password = Hash::make($validatedData['password']);
+        }
+
+        $user->save();
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'User updated successfully', 'user' => $user]);
+        }
+
+        return redirect()->route('admin.users')->with('success', 'User updated successfully');
     }
 
     public function staffIndex()
     {
         $staff = Staff::with('organization')->get(); // Eager load organization for display
-        return view('admin.staff', compact('staff'));
+        $organizations = Organization::orderBy('name')->get();
+
+        return view('admin.staff', compact('staff', 'organizations'));
     }
 
     public function analyticsIndex()
@@ -241,6 +280,10 @@ class AdminController extends Controller
 
     public function promoteUserToStaff(Request $request, User $user)
     {
+        if (Staff::where('email', $user->email)->exists()) {
+            return redirect()->route('admin.users')->with('error', 'This user already exists in staff.');
+        }
+
         // Create staff record from user data
         $staff = Staff::create([
             'name' => $user->name,
@@ -256,6 +299,37 @@ class AdminController extends Controller
         // $user->delete();
 
         return redirect()->route('admin.staff')->with('success', 'User promoted to staff successfully');
+    }
+
+    public function assignReport(Request $request, Report $report)
+    {
+        $validatedData = $request->validate([
+            'staff_id' => 'required|exists:staff,id',
+        ]);
+
+        $staff = Staff::findOrFail($validatedData['staff_id']);
+
+        $report->update([
+            'assigned_to' => $staff->id,
+            'status' => $report->status === 'Pending' ? 'In Progress' : $report->status,
+        ]);
+
+        try {
+            Notification::send($staff, new ReportAssigned($report->fresh()));
+            Notification::send(
+                User::role(['admin', 'super-admin'])->get(),
+                new ReportActivityNotification(
+                    'Report assigned',
+                    'Report #' . $report->id . ' was assigned to ' . $staff->name . '.',
+                    route('admin.reports.show', $report),
+                    ['report_id' => $report->id, 'assigned_to' => $staff->id]
+                )
+            );
+        } catch (Throwable $exception) {
+            return redirect()->back()->with('warning', 'Report assigned, but the staff notification could not be sent.');
+        }
+
+        return redirect()->back()->with('success', 'Report assigned to ' . $staff->name . ' successfully.');
     }
 
     public function impersonateStaff(Staff $staff)

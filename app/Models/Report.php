@@ -23,8 +23,12 @@ class Report extends Model
         'media_path',
         'status',
         'user_id',
+        'assigned_to',
         'organization_id',
         'is_anonymous',
+        'notes',
+        'resolved_at_latitude',
+        'resolved_at_longitude',
     ];
 
     public function organization()
@@ -32,9 +36,17 @@ class Report extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function assignedStaff()
+    {
+        return $this->belongsTo(Staff::class, 'assigned_to');
+    }
+
     protected $casts = [
         'media_paths' => 'array',
         'is_anonymous' => 'boolean',
+        'notes' => 'array',
+        'resolved_at_latitude' => 'decimal:8',
+        'resolved_at_longitude' => 'decimal:8',
     ];
 
     public function user()

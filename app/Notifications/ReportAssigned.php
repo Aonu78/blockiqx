@@ -50,6 +50,9 @@ class ReportAssigned extends Notification
     public function toArray(object $notifiable): array
     {
         return [
+            'title' => 'New report assigned',
+            'message' => 'Report #' . $this->report->id . ' has been assigned to you.',
+            'url' => url('/staff/reports'),
             'report_id' => $this->report->id,
             'incident_type' => $this->report->incident_type,
             'location' => $this->report->location,

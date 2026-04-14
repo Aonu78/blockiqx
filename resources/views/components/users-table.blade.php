@@ -62,15 +62,62 @@
                                                 <i class="fas fa-user-plus text-success"></i>
                                             </button>
                                         </form>
-                                        <a href="#" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit user">
+                                        <button type="button" class="btn btn-link p-0 m-0 mx-3"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editUserModal{{ $user->id }}"
+                                            data-bs-original-title="Edit user">
                                             <i class="fas fa-user-edit text-secondary"></i>
-                                        </a>
+                                        </button>
                                         <span>
                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                         </span>
                                     </div>
                                 </td>
                             </tr>
+
+                            <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1"
+                                role="dialog" aria-labelledby="editUserModalLabel{{ $user->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editUserModalLabel{{ $user->id }}">Edit {{ $user->name }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-body text-start">
+                                                <div class="form-group">
+                                                    <label for="name{{ $user->id }}">Name</label>
+                                                    <input id="name{{ $user->id }}" type="text" class="form-control"
+                                                        name="name" value="{{ $user->name }}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="email{{ $user->id }}">Email</label>
+                                                    <input id="email{{ $user->id }}" type="email" class="form-control"
+                                                        name="email" value="{{ $user->email }}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="password{{ $user->id }}">New Password</label>
+                                                    <input id="password{{ $user->id }}" type="password" class="form-control"
+                                                        name="password">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="password_confirmation{{ $user->id }}">Confirm New Password</label>
+                                                    <input id="password_confirmation{{ $user->id }}" type="password"
+                                                        class="form-control" name="password_confirmation">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn bg-gradient-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn bg-gradient-primary">Save Changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             @endforeach
                         </tbody>
                     </table>

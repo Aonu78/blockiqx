@@ -42,6 +42,9 @@
                                 </td>
                                 <td class="text-center">
                                     <p class="text-xs font-weight-bold mb-0">{{ $report->organization->name ?? 'N/A' }}</p>
+                                    <p class="text-xs text-secondary mb-0">
+                                        {{ $report->assignedStaff->name ?? 'Unassigned' }}
+                                    </p>
                                 </td>
                                 <td class="text-center">
                                     <span class="badge badge-sm bg-gradient-{{ $report->status == 'Completed' ? 'success' : ($report->status == 'Pending' ? 'warning' : 'primary') }}">
@@ -50,7 +53,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <a href="#" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="View details">
+                                        <a href="{{ route('admin.reports.show', $report->id) }}" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="View details">
                                             <i class="fas fa-eye text-secondary"></i>
                                         </a>
                                         <div class="dropdown">
@@ -58,8 +61,8 @@
                                                 <i class="fa fa-ellipsis-v text-xs"></i>
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $report->id }}">
-                                                <li class="dropdown-header">Assign to Staff</li>
-                                                @foreach(\App\Models\Staff::all() as $staff)
+                                                <li class="dropdown-header"><b>Assign to Staff</b></li>
+                                                @forelse($staffMembers as $staff)
                                                 <li>
                                                     <form action="{{ route('admin.reports.assign', $report->id) }}" method="POST">
                                                         @csrf
@@ -67,7 +70,9 @@
                                                         <button type="submit" class="dropdown-item">{{ $staff->name }}</button>
                                                     </form>
                                                 </li>
-                                                @endforeach
+                                                @empty
+                                                <li><span class="dropdown-item-text text-secondary">No staff available</span></li>
+                                                @endforelse
                                             </ul>
                                         </div>
                                     </div>

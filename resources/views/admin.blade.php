@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const ctx = document.getElementById(canvasId).getContext('2d');
                 
-                const chartDataPoints = data[dataKey];
+                const chartDataPoints = dataKey ? data[dataKey] : data;
                 if (!chartDataPoints || !Array.isArray(chartDataPoints)) {
                     console.error(`Data key "${dataKey}" not found or is not an array in API response.`);
                     document.getElementById(canvasId).parentElement.innerHTML = '<p>Could not load chart data: Invalid API response.</p>';
@@ -251,13 +251,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const areaColors = ['rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(255, 206, 86, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 99, 132, 0.6)'];
 
     // Render Reports by Status Chart (Pie Chart)
-    fetchAndRenderChart('reportsByStatusChart', '/api/admin/analytics/reports-overview', 'pie', 'Reports by Status', 'by_status', statusColors);
+    fetchAndRenderChart('reportsByStatusChart', '{{ route('admin.data.reports-overview') }}', 'pie', 'Reports by Status', 'by_status', statusColors);
 
     // Render Reports by Incident Type Chart (Bar Chart)
-    fetchAndRenderChart('reportsByTypeChart', '/api/admin/analytics/reports-overview', 'bar', 'Number of Reports', 'by_type', typeColors);
+    fetchAndRenderChart('reportsByTypeChart', '{{ route('admin.data.reports-overview') }}', 'bar', 'Number of Reports', 'by_type', typeColors);
 
     // Render Reports by Area Chart (Bar Chart)
-    fetchAndRenderChart('reportsByAreaChart', '/api/admin/analytics/area-insights', 'bar', 'Number of Reports', 'data', areaColors); // Note: area-insights returns array directly, not in 'data' key.
+    fetchAndRenderChart('reportsByAreaChart', '{{ route('admin.data.area-insights') }}', 'bar', 'Number of Reports', null, areaColors);
 });
 </script>
 @endsection

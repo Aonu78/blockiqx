@@ -5,40 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Staff;
 
 class StaffController extends Controller
 {
     public function reportsIndex()
     {
-        // For simplicity, using the first staff user if not logged in for demo
         $staff = Auth::guard('staff')->user();
-        
+
         if (!$staff) {
-            // Redirect to login or show error - for now, just get first one to show something
-            $staff = \App\Models\Staff::first();
+            $staff = Staff::first();
         }
 
         if (!$staff) {
              return view('staff.reports', ['reports' => []]);
         }
 
-        $reports = Report::where('assigned_to', $staff->id)->get();
+        $reports = Report::with(['organization', 'assignedStaff'])
+            ->where('assigned_to', $staff->id)
+            ->latest()
+            ->get();
 
         return view('staff.reports', compact('reports'));
     }
 
     public function getAssignedReports()
     {
-        $staff = Auth::user();
-        // This assumes you have a way to assign reports to staff members.
-        // We will add this functionality in a later step.
-        $reports = Report::where('assigned_to', $staff->id)->get();
+        $staff = Auth::guard('staff')->user();
+        $reports = Report::with(['organization', 'assignedStaff'])
+            ->where('assigned_to', $staff->id)
+            ->latest()
+            ->get();
 
         return response()->json($reports);
     }
 
     public function getReportDetails(Report $report)
     {
+        $report->load(['organization', 'assignedStaff', 'user']);
+
         return response()->json($report);
     }
 
@@ -59,6 +64,8 @@ class StaffController extends Controller
         }
 
         broadcast(new \App\Events\ReportStatusUpdated($report))->toOthers();
+
+        if ($request->wantsJson()) {
             return response()->json([
                 'message' => 'Report status updated successfully',
                 'report' => $report
@@ -90,7 +97,7 @@ class StaffController extends Controller
 
         $mediaPaths = $report->media_paths ?? []; // Get existing paths or initialize empty array
 
-        foreach ($request->file('media') as $file) {
+        foreach ($request->file('media', []) as $file) {
             $path = $file->store('reports/media', 'public');
             $mediaPaths[] = $path;
         }
