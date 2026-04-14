@@ -5,6 +5,42 @@
 <style>
     #map { height: 600px; border-radius: 15px; }
     .filter-card { margin-bottom: 20px; }
+    .map-legend {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+        padding: 16px;
+    }
+    .legend-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .legend-item {
+        align-items: center;
+        display: flex;
+        font-size: 0.875rem;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .legend-item:last-child {
+        margin-bottom: 0;
+    }
+    .legend-swatch {
+        border-radius: 999px;
+        display: inline-block;
+        flex: 0 0 14px;
+        height: 14px;
+        width: 14px;
+    }
+    .legend-icon {
+        align-items: center;
+        color: purple;
+        display: inline-flex;
+        flex: 0 0 18px;
+        justify-content: center;
+        width: 18px;
+    }
 </style>
 
 <div class="row">
@@ -62,6 +98,52 @@
                 <div id="map"></div>
             </div>
         </div>
+
+        <div class="card mx-4 mt-4">
+            <div class="card-body p-3">
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="map-legend h-100">
+                            <h6 class="mb-3">Report Status Colors</h6>
+                            <ul class="legend-list">
+                                <li class="legend-item"><span class="legend-swatch" style="background: orange;"></span> Pending</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: blue;"></span> In Progress</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: purple;"></span> Arrived at location</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: cyan;"></span> Work started</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: green;"></span> Completed</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: gray;"></span> Other status</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="map-legend h-100">
+                            <h6 class="mb-3">Concern Level Colors</h6>
+                            <ul class="legend-list">
+                                <li class="legend-item"><span class="legend-swatch" style="background: red;"></span> High concern</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: orange;"></span> Medium concern</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: green;"></span> Low concern</li>
+                                <li class="legend-item"><span class="legend-swatch" style="background: gray;"></span> Unknown concern</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="map-legend h-100">
+                            <h6 class="mb-3">Marker Types</h6>
+                            <ul class="legend-list">
+                                <li class="legend-item">
+                                    <span class="legend-swatch" style="background: blue;"></span>
+                                    Report location
+                                </li>
+                                <li class="legend-item">
+                                    <span class="legend-icon"><i class="fas fa-user-tie"></i></span>
+                                    Staff location
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -102,11 +184,9 @@
             const formData = new FormData(form);
             const params = new URLSearchParams(formData).toString();
 
-            fetch(`/api/admin/analytics/map-view?${params}`, {
+            fetch(`{{ route('admin.data.map-view') }}?${params}`, {
                 headers: {
                     'Accept': 'application/json',
-                    // Add Authorization header if auth:sanctum middleware is applied to this route
-                    // 'Authorization': 'Bearer ' + localStorage.getItem('api_token') 
                 }
             })
             .then(response => {
@@ -124,15 +204,15 @@
                     const reportColor = getStatusColor(report.status);
                     const concernColor = getConcernColor(report.concern_level);
 
-                    const popupContent = `
-                        <strong>${report.incident_type}</strong><br>
-                        Category: ${report.category || 'N/A'}<br>
-                        Status: <span style="color: ${reportColor}; font-weight: bold;">${report.status}</span><br>
-                        Concern: <span style="color: ${concernColor}; font-weight: bold;">${report.concern_level}</span><br>
-                        Location: ${report.location}<br>
-                        Coords: (${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)})<br>
-                        <small>Description: ${report.description.substring(0, 50)}...</small>
-                    `;
+                        const popupContent = `
+                            <strong>${report.incident_type}</strong><br>
+                            Category: ${report.category || 'N/A'}<br>
+                            Status: <span style="color: ${reportColor}; font-weight: bold;">${report.status}</span><br>
+                            Concern: <span style="color: ${concernColor}; font-weight: bold;">${report.concern_level}</span><br>
+                            Location: ${report.location}<br>
+                            Coords: (${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)})<br>
+                            <small>Description: ${(report.description || 'No description').substring(0, 50)}...</small>
+                        `;
                     const marker = L.circleMarker([report.latitude, report.longitude], {
                         color: reportColor,
                         fillColor: reportColor,
@@ -153,8 +233,8 @@
                             icon: L.divIcon({className: 'staff-icon', html: `<i class="fas fa-user-tie" style="color: purple; font-size: 24px;"></i>`, iconSize: [24, 24]})
                         }).bindPopup(`
                             <strong>${staff.name}</strong><br>
-                            Location: ${staff.location}<br>
-                            Org: ${staff.organization?.name ?? 'N/A'}
+                            Location: ${staff.location || 'N/A'}<br>
+                            Org: ${staff.organization?.name || 'N/A'}
                         `);
                         staffMarkers.addLayer(staffMarker);
                     }

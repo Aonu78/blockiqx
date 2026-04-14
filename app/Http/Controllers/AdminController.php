@@ -103,11 +103,11 @@ class AdminController extends Controller
             $query->where('incident_type', $request->incident_type);
         }
 
-        if ($request->has('date_from')) {
+        if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
 
-        if ($request->has('date_to')) {
+        if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
         
@@ -160,11 +160,11 @@ class AdminController extends Controller
             $query->where('incident_type', $request->incident_type);
         }
 
-        if ($request->has('date_from')) {
+        if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
 
-        if ($request->has('date_to')) {
+        if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
         
@@ -181,6 +181,7 @@ class AdminController extends Controller
         // Fetch staff with their coordinates
         $staff = Staff::whereNotNull('latitude')
             ->whereNotNull('longitude')
+            ->with('organization')
             ->select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')
             ->get();
 
