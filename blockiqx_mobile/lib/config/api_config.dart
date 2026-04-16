@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = 'http://YOUR_SERVER_IP:5000/api';
+  static const String baseUrl = 'https://deeppink-bat-985227.hostingersite.com/api';
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   static const String login = '$baseUrl/login';
