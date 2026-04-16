@@ -310,7 +310,7 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                     fontSize: 16)),
             Text(adminName,
                 style: TextStyle(
-                    color: Colors.white.withOpacity(0.6), fontSize: 12)),
+                    color: const Color.fromRGBO(255, 255, 255, 0.6), fontSize: 12)),
           ],
         ),
         actions: [
@@ -465,7 +465,7 @@ class _MapTab extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.5),
+                    color: color.withAlpha(128),
                     blurRadius: 6,
                   )
                 ],
@@ -518,7 +518,7 @@ class _MapTab extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.deepPurple.withOpacity(0.5),
+                    color: Colors.deepPurple.withAlpha(128),
                     blurRadius: 6,
                   )
                 ],
@@ -564,16 +564,16 @@ class _MapTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black.withOpacity(0.1), blurRadius: 8)
+                    color: const Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 8)
               ],
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Legend',
+                Text('Legend',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 12)),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 _LegendRow(color: Colors.orange, label: 'Pending'),
                 _LegendRow(color: Colors.blue, label: 'In Progress'),
                 _LegendRow(color: Colors.purple, label: 'Arrived'),
@@ -590,7 +590,7 @@ class _MapTab extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1B2A).withOpacity(0.85),
+              color: const Color.fromRGBO(13, 27, 42, 0.85),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -641,9 +641,9 @@ class _ListTab extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         if (staff.isNotEmpty) ...[
-          _SectionHeader(
+          const _SectionHeader(
               icon: Icons.person_pin_circle_outlined,
-              title: 'Staff Locations (${staff.length})',
+              title: 'Staff Locations',
               color: Colors.deepPurple),
           ...staff.map((s) => _StaffTile(s: s)),
           const SizedBox(height: 16),
@@ -708,7 +708,7 @@ class _StaffTile extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.deepPurple.withOpacity(0.1),
+            color: Colors.deepPurple.withAlpha(25),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.person, color: Colors.deepPurple),
@@ -763,7 +763,7 @@ class _ReportListTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withAlpha(25),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(Icons.report_problem, color: color, size: 20),
@@ -783,7 +783,7 @@ class _ReportListTile extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.12),
+                          color: color.withAlpha(30),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(status,

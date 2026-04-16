@@ -273,7 +273,7 @@ class _DashboardHeader extends StatelessWidget {
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: const Color.fromRGBO(255, 255, 255, 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(Icons.badge_outlined,
@@ -296,7 +296,7 @@ class _DashboardHeader extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.12),
+                                color: const Color.fromRGBO(255, 255, 255, 0.12),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.refresh,
@@ -309,7 +309,7 @@ class _DashboardHeader extends StatelessWidget {
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.12),
+                                color: const Color.fromRGBO(255, 255, 255, 0.12),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.logout,
@@ -324,7 +324,7 @@ class _DashboardHeader extends StatelessWidget {
                   Text(
                     'Welcome back,',
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.6), fontSize: 13),
+                        color: const Color.fromRGBO(255, 255, 255, 0.6), fontSize: 13),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -346,12 +346,12 @@ class _DashboardHeader extends StatelessWidget {
 
 class _HeaderArcsPainter extends CustomPainter {
   final double t;
-  _HeaderArcsPainter(this.t);
+  const _HeaderArcsPainter(this.t);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = const Color.fromRGBO(255, 255, 255, 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     for (var i = 0; i < 4; i++) {
@@ -458,7 +458,7 @@ class _AnimatedStatCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.15),
+                  color: color.withAlpha(38),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -478,7 +478,7 @@ class _AnimatedStatCard extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                      color: color.withOpacity(0.7), fontSize: 9),
+                      color: color.withAlpha(178), fontSize: 9),
                 ),
               ],
             ),
@@ -580,8 +580,8 @@ class _FilterTabState extends State<_FilterTab>
             boxShadow: [
               BoxShadow(
                 color: widget.isSelected
-                    ? _active.withOpacity(0.3)
-                    : Colors.black.withOpacity(0.05),
+                    ? _active.withAlpha(76)
+                    : const Color.fromRGBO(0, 0, 0, 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
@@ -655,7 +655,7 @@ class _EmptyState extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF43A047).withOpacity(0.08),
+              color: const Color.fromRGBO(67, 160, 71, 0.08),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.assignment_outlined,
@@ -694,7 +694,7 @@ class _ErrorView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.08),
+                color: const Color.fromRGBO(255, 0, 0, 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.error_outline,

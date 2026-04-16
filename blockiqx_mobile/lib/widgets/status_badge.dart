@@ -26,9 +26,9 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.15),
+        color: _color.withAlpha(38),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _color.withOpacity(0.6)),
+        border: Border.all(color: _color.withAlpha(153)),
       ),
       child: Text(
         status,
@@ -62,7 +62,7 @@ class ConcernBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.1),
+        color: _color.withAlpha(25),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

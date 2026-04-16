@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'admin_map_screen.dart';
-import '../auth/login_screen.dart'
-    show
-        _LoginBgPainter,
-        _GlassCard,
-        _AnimatedField,
-        _GradientButton,
-        _ErrorBanner;
+import '../auth/shared_widgets.dart';
 
 class AdminLoginScreen extends StatefulWidget {
   const AdminLoginScreen({super.key});
@@ -96,8 +90,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                     _bgCtrl.value)!,
                 Color.lerp(const Color(0xFF100718), const Color(0xFF0D1B2A),
                     _bgCtrl.value)!,
-                Color.lerp(const Color(0xFF4A148C).withOpacity(0.25),
-                    const Color(0xFF6A1B9A).withOpacity(0.1),
+                Color.lerp(const Color.fromRGBO(74, 20, 140, 0.25),
+                    const Color.fromRGBO(106, 27, 154, 0.1),
                     _bgCtrl.value)!,
               ],
             ),
@@ -107,7 +101,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
               Positioned.fill(
                 child: CustomPaint(
                     painter:
-                        _LoginBgPainter(_bgCtrl.value, _accent)),
+                        LoginBgPainter(_bgCtrl.value, _accent)),
               ),
               SafeArea(
                 child: Column(
@@ -119,7 +113,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                         icon: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
+                            color: const Color.fromRGBO(255, 255, 255, 0.08),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(Icons.arrow_back_ios_new,
@@ -142,10 +136,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: _accent.withOpacity(0.15),
+                                    color: const Color.fromRGBO(123, 31, 162, 0.15),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                        color: _accent.withOpacity(0.3)),
+                                        color: const Color.fromRGBO(123, 31, 162, 0.3)),
                                   ),
                                   child: const Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -183,16 +177,16 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                 Text(
                                   'Access analytics map and reports overview',
                                   style: TextStyle(
-                                      color: Colors.white.withOpacity(0.45),
+                                      color: const Color.fromRGBO(255, 255, 255, 0.45),
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 32),
-                                _GlassCard(
+                                GlassCard(
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
                                       children: [
-                                        _AnimatedField(
+                                        AnimatedField(
                                           controller: _emailCtrl,
                                           label: 'Admin Email',
                                           icon: Icons
@@ -206,7 +200,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                                   : null,
                                         ),
                                         const SizedBox(height: 16),
-                                        _AnimatedField(
+                                        AnimatedField(
                                           controller: _passwordCtrl,
                                           label: 'Password',
                                           icon: Icons.lock_outline,
@@ -231,11 +225,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                         ),
                                         if (auth.error != null) ...[
                                           const SizedBox(height: 14),
-                                          _ErrorBanner(
+                                          ErrorBanner(
                                               message: auth.error!),
                                         ],
                                         const SizedBox(height: 24),
-                                        _GradientButton(
+                                        GradientButton(
                                           label: 'Sign In as Admin',
                                           isLoading: auth.isLoading,
                                           gradient: const LinearGradient(

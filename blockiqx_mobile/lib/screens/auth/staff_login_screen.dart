@@ -2,13 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../staff/staff_dashboard_screen.dart';
-import 'login_screen.dart'
-    show
-        _LoginBgPainter,
-        _GlassCard,
-        _AnimatedField,
-        _GradientButton,
-        _ErrorBanner;
+import 'shared_widgets.dart';
 
 class StaffLoginScreen extends StatefulWidget {
   const StaffLoginScreen({super.key});
@@ -96,8 +90,8 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                     _bgCtrl.value)!,
                 Color.lerp(const Color(0xFF071208), const Color(0xFF0D1B2A),
                     _bgCtrl.value)!,
-                Color.lerp(const Color(0xFF1B5E20).withOpacity(0.25),
-                    const Color(0xFF2E7D32).withOpacity(0.1),
+                Color.lerp(const Color.fromRGBO(27, 94, 32, 0.25),
+                    const Color.fromRGBO(46, 125, 50, 0.1),
                     _bgCtrl.value)!,
               ],
             ),
@@ -107,7 +101,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
               Positioned.fill(
                 child: CustomPaint(
                     painter:
-                        _LoginBgPainter(_bgCtrl.value, _accent)),
+                        LoginBgPainter(_bgCtrl.value, _accent)),
               ),
               SafeArea(
                 child: Column(
@@ -119,7 +113,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                         icon: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
+                            color: const Color.fromRGBO(255, 255, 255, 0.08),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(Icons.arrow_back_ios_new,
@@ -142,10 +136,10 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: _accent.withOpacity(0.15),
+                                    color: const Color.fromRGBO(67, 160, 71, 0.15),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                        color: _accent.withOpacity(0.3)),
+                                        color: const Color.fromRGBO(67, 160, 71, 0.3)),
                                   ),
                                   child: const Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -180,16 +174,16 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                                 Text(
                                   'Sign in to manage your assigned reports',
                                   style: TextStyle(
-                                      color: Colors.white.withOpacity(0.45),
+                                      color: const Color.fromRGBO(255, 255, 255, 0.45),
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 32),
-                                _GlassCard(
+                                GlassCard(
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
                                       children: [
-                                        _AnimatedField(
+                                        AnimatedField(
                                           controller: _emailCtrl,
                                           label: 'Staff Email',
                                           icon: Icons.email_outlined,
@@ -202,7 +196,7 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                                                   : null,
                                         ),
                                         const SizedBox(height: 16),
-                                        _AnimatedField(
+                                        AnimatedField(
                                           controller: _passwordCtrl,
                                           label: 'Password',
                                           icon: Icons.lock_outline,
@@ -227,11 +221,11 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                                         ),
                                         if (auth.error != null) ...[
                                           const SizedBox(height: 14),
-                                          _ErrorBanner(
+                                          ErrorBanner(
                                               message: auth.error!),
                                         ],
                                         const SizedBox(height: 24),
-                                        _GradientButton(
+                                        GradientButton(
                                           label: 'Sign In as Staff',
                                           isLoading: auth.isLoading,
                                           gradient: const LinearGradient(

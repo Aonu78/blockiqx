@@ -170,47 +170,40 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                   // ── Info card ────────────────────────────────────
                   _animated(
                     3,
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const _SectionLabel(text: 'About BLOCKIQx'),
-                        const SizedBox(height: 12),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(18),
-                            boxShadow: [
-                              BoxShadow(
-                                color:
-                                    const Color(0xFF1E88E5).withOpacity(0.06),
-                                blurRadius: 20,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
+                        _SectionLabel(text: 'About BLOCKIQx'),
+                        SizedBox(height: 12),
+                        Card(
+                          elevation: 0,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
                           child: Column(
                             children: [
                               _InfoTile(
                                 icon: Icons.report_problem_outlined,
-                                iconColor: const Color(0xFF1E88E5),
+                                iconColor: Color(0xFF1E88E5),
                                 text:
                                     'Submit anonymous or identified incident reports',
                                 isFirst: true,
                               ),
                               _InfoTile(
                                 icon: Icons.location_on_outlined,
-                                iconColor: const Color(0xFF43A047),
+                                iconColor: Color(0xFF43A047),
                                 text:
                                     'Include your location for faster response',
                               ),
                               _InfoTile(
                                 icon: Icons.attach_file_outlined,
-                                iconColor: const Color(0xFF7B1FA2),
+                                iconColor: Color(0xFF7B1FA2),
                                 text: 'Attach photos and videos as evidence',
                               ),
                               _InfoTile(
                                 icon: Icons.notifications_outlined,
-                                iconColor: const Color(0xFFE65100),
+                                iconColor: Color(0xFFE65100),
                                 text:
                                     'Track your report status in real time',
                                 isLast: true,
@@ -297,7 +290,7 @@ class _HomeHeader extends StatelessWidget {
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: const Color.fromRGBO(255, 255, 255, 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(Icons.shield_outlined,
@@ -320,7 +313,7 @@ class _HomeHeader extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.12),
+                            color: const Color.fromRGBO(255, 255, 255, 0.12),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(Icons.logout,
@@ -334,7 +327,7 @@ class _HomeHeader extends StatelessWidget {
                   Text(
                     greeting,
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
+                        color: const Color.fromRGBO(255, 255, 255, 0.6),
                         fontSize: 13),
                   ),
                   const SizedBox(height: 2),
@@ -351,7 +344,7 @@ class _HomeHeader extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.12),
+                      color: const Color.fromRGBO(255, 255, 255, 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -363,7 +356,7 @@ class _HomeHeader extends StatelessWidget {
                         Text(
                           'Reporting platform is active',
                           style: TextStyle(
-                              color: Colors.white.withOpacity(0.7),
+                              color: const Color.fromRGBO(255, 255, 255, 0.7),
                               fontSize: 11),
                         ),
                       ],
@@ -381,12 +374,12 @@ class _HomeHeader extends StatelessWidget {
 
 class _HeaderArcsPainter extends CustomPainter {
   final double t;
-  _HeaderArcsPainter(this.t);
+  const _HeaderArcsPainter(this.t);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.04)
+      ..color = const Color.fromRGBO(255, 255, 255, 0.04)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     for (var i = 0; i < 4; i++) {
@@ -459,7 +452,7 @@ class _ActionCardState extends State<_ActionCard>
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: widget.gradient.colors.last.withOpacity(0.35),
+                color: widget.gradient.colors.last.withAlpha(89),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -471,7 +464,7 @@ class _ActionCardState extends State<_ActionCard>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: const Color.fromRGBO(255, 255, 255, 0.15),
                   borderRadius: BorderRadius.circular(11),
                 ),
                 child: Icon(widget.icon, color: Colors.white, size: 22),
@@ -485,7 +478,7 @@ class _ActionCardState extends State<_ActionCard>
               const SizedBox(height: 3),
               Text(widget.subtitle,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.65),
+                      color: const Color.fromRGBO(255, 255, 255, 0.65),
                       fontSize: 11)),
             ],
           ),
@@ -523,7 +516,7 @@ class _InfoTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
+                  color: iconColor.withAlpha(25),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: iconColor, size: 18),
@@ -542,7 +535,7 @@ class _InfoTile extends StatelessWidget {
               height: 1,
               indent: 18,
               endIndent: 18,
-              color: Colors.grey.withOpacity(0.12)),
+              color: Colors.grey.withAlpha(30)),
       ],
     );
   }

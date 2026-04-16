@@ -112,14 +112,14 @@ class _ReportCardState extends State<ReportCard>
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: statusColor.withOpacity(0.08),
+                color: statusColor.withAlpha(20),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+              const BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.04),
                 blurRadius: 8,
-                offset: const Offset(0, 2),
+                offset: Offset(0, 2),
               ),
             ],
           ),
@@ -145,8 +145,8 @@ class _ReportCardState extends State<ReportCard>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  statusColor.withOpacity(0.15),
-                                  statusColor.withOpacity(0.08),
+                                  statusColor.withAlpha(38),
+                                  statusColor.withAlpha(20),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
@@ -198,10 +198,10 @@ class _ReportCardState extends State<ReportCard>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: statusColor.withOpacity(0.1),
+                              color: statusColor.withAlpha(25),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: statusColor.withOpacity(0.2)),
+                                  color: statusColor.withAlpha(51)),
                             ),
                             child: Text(
                               report.status,
@@ -244,7 +244,7 @@ class _ReportCardState extends State<ReportCard>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: concernColor.withOpacity(0.1),
+                              color: concernColor.withAlpha(25),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(

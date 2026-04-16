@@ -123,8 +123,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                                   borderRadius: BorderRadius.circular(20),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF1E88E5)
-                                          .withOpacity(0.5),
+                                      color: const Color.fromRGBO(30, 136, 229, 0.5),
                                       blurRadius: 24,
                                       spreadRadius: 2,
                                     ),
@@ -155,7 +154,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                                 'Choose how you\'re accessing the platform',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.white.withOpacity(0.4),
+                                    color: const Color.fromRGBO(255, 255, 255, 0.4),
                                     fontSize: 12),
                               ),
                             ],
@@ -232,20 +231,20 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  color: Colors.white.withOpacity(0.12)),
+                                  color: const Color.fromRGBO(255, 255, 255, 0.12)),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.person_outline,
-                                    color: Colors.white.withOpacity(0.5),
+                                    color: const Color.fromRGBO(255, 255, 255, 0.5),
                                     size: 18),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Continue as Guest',
                                   style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: const Color.fromRGBO(255, 255, 255, 0.5),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -338,15 +337,15 @@ class _RoleCardState extends State<_RoleCard>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.gradient.colors
-                  .map((c) => c.withOpacity(0.15))
+                  .map((c) => c.withAlpha(38))
                   .toList(),
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: widget.glowColor.withOpacity(0.3), width: 1),
+                color: widget.glowColor.withAlpha(76), width: 1),
             boxShadow: [
               BoxShadow(
-                color: widget.glowColor.withOpacity(0.12),
+                color: widget.glowColor.withAlpha(30),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -362,7 +361,7 @@ class _RoleCardState extends State<_RoleCard>
                   borderRadius: BorderRadius.circular(13),
                   boxShadow: [
                     BoxShadow(
-                      color: widget.glowColor.withOpacity(0.4),
+                      color: widget.glowColor.withAlpha(102),
                       blurRadius: 12,
                     ),
                   ],
@@ -383,7 +382,7 @@ class _RoleCardState extends State<_RoleCard>
                     const SizedBox(height: 3),
                     Text(widget.subtitle,
                         style: TextStyle(
-                            color: Colors.white.withOpacity(0.45),
+                            color: const Color.fromRGBO(255, 255, 255, 0.45),
                             fontSize: 12)),
                   ],
                 ),
@@ -391,7 +390,7 @@ class _RoleCardState extends State<_RoleCard>
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: widget.glowColor.withOpacity(0.15),
+                  color: widget.glowColor.withAlpha(38),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(Icons.arrow_forward_ios,
@@ -414,7 +413,7 @@ class _ArcsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF1E88E5).withOpacity(0.04)
+      ..color = const Color.fromRGBO(30, 136, 229, 0.04)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 

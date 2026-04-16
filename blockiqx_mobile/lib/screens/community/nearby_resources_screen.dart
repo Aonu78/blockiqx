@@ -122,7 +122,7 @@ class _NearbyResourcesScreenState extends State<NearbyResourcesScreen> {
                             leading: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF43A047).withOpacity(0.1),
+                                color: const Color.fromRGBO(67, 160, 71, 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.place,

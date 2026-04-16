@@ -1,31 +1,29 @@
-{pkgs}: {
+{ pkgs, ... }: {
   channel = "stable-24.05";
 
   packages = [
-    pkgs.nodejs_20
-    pkgs.php82
-    pkgs.php82Packages.composer
+    pkgs.flutter
+    pkgs.jdk17
+    pkgs.unzip
+    pkgs.git
+    pkgs.apt
+    pkgs.curl
+    pkgs.android-tools
   ];
 
-  idx.extensions = [
-    "svelte.svelte-vscode"
-    "vue.volar"
-  ];
+  env = {
+    ANDROID_SDK_ROOT = "/android-sdk";
+  };
 
-  idx.previews = {
-    previews = {
-      web = {
-        command = [
-          "npm"
-          "run"
-          "dev"
-          "--"
-          "--port"
-          "$PORT"
-          "--host"
-          "0.0.0.0"
-        ];
-        manager = "web";
+  idx = {
+    extensions = [
+      "Dart-Code.flutter"
+      "Dart-Code.dart-code"
+    ];
+
+    workspace = {
+      onCreate = {
+        flutter-precache = "flutter precache";
       };
     };
   };
