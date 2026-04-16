@@ -62,7 +62,27 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
         permission = await Geolocator.requestPermission();
       }
       if (permission == LocationPermission.deniedForever) {
-        _showSnack('Location permission denied permanently');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Location Permission Required'),
+            content: const Text(
+                'This app needs location access to submit a report. Please grant location permission in the app settings.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('Open Settings'),
+                onPressed: () {
+                  Geolocator.openAppSettings();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
         return;
       }
       final pos = await Geolocator.getCurrentPosition(

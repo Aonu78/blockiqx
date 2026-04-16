@@ -1,22 +1,26 @@
+import 'dart:io';
+
 class ApiConfig {
-  static const String baseUrl = 'https://deeppink-bat-985227.hostingersite.com/api';
+  static String get baseUrl {
+    return 'https://deeppink-bat-985227.hostingersite.com/api'; // Use this for Android emulator
+  }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
-  static const String login = '$baseUrl/login';
-  static const String staffLogin = '$baseUrl/staff/login';
-  static const String logout = '$baseUrl/logout';
+  static String get login => '$baseUrl/login';
+  static String get staffLogin => '$baseUrl/staff/login';
+  static String get logout => '$baseUrl/logout';
 
   // ── Community / Guest ─────────────────────────────────────────────────────
-  static const String submitReport = '$baseUrl/reports';
-  static const String nearbyResources = '$baseUrl/reports/nearby';
+  static String get submitReport => '$baseUrl/reports';
+  static String get nearbyResources => '$baseUrl/reports/nearby';
 
   // ── Staff ─────────────────────────────────────────────────────────────────
-  static const String staffReports = '$baseUrl/staff/reports';
+  static String get staffReports => '$baseUrl/staff/reports';
   static String staffReportDetail(int id) => '$baseUrl/staff/reports/$id';
   static String updateReport(int id) => '$baseUrl/staff/reports/$id';
 
   // ── Admin ─────────────────────────────────────────────────────────────────
-  static const String adminMapView = '$baseUrl/admin/analytics/map-view';
+  static String get adminMapView => '$baseUrl/admin/analytics/map-view';
 
   // ── Headers ───────────────────────────────────────────────────────────────
   static Map<String, String> headers(String? token) {
