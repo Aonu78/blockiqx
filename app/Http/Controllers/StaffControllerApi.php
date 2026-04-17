@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Staff;
 
-class StaffControllerApi extends Controller
+class StaffController extends Controller
 {
     public function reportsIndex()
     {
-        $staff = Auth::guard('staff')->user();
+        $staff = Auth::user();
 
         if (!$staff) {
             $staff = Staff::first();
@@ -87,7 +87,7 @@ class StaffControllerApi extends Controller
         ]);
 
         $notes = $report->notes ?? []; // Get existing notes or initialize empty array
-        $notes[] = ['user_id' => Auth::guard('staff')->id(), 'note' => $validatedData['notes'], 'timestamp' => now()]; // Add new note with staff ID and timestamp
+        $notes[] = ['user_id' => Auth::user()->id(), 'note' => $validatedData['notes'], 'timestamp' => now()]; // Add new note with staff ID and timestamp
         
         $report->update(['notes' => $notes]);
 
