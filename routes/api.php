@@ -9,20 +9,13 @@ use App\Http\Controllers\AuthController;
 
 Route::post('/login', [AuthController::class, 'userLogin']);
 Route::post('/staff/login', [AuthController::class, 'staffLogin']);
+Route::post('/register', [AuthController::class, 'registerUser']);
 
 Route::post('/reports', [ReportController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/reports/nearby', [ReportController::class, 'getNearbyResources']);
-
-    Route::prefix('staff')->group(function () {
-        Route::get('/reports', [StaffController::class, 'getAssignedReports']);
-        Route::get('/reports/{report}', [StaffController::class, 'getReportDetails']);
-        Route::put('/reports/{report}', [StaffController::class, 'updateReportStatus']);
-        Route::post('/reports/{report}/notes', [StaffController::class, 'addFieldNotes']);
-        Route::post('/reports/{report}/media', [StaffController::class, 'uploadMedia']);
-    });
 
     Route::prefix('admin')->group(function () {
         Route::get('/reports', [AdminController::class, 'getAllReports']);
@@ -36,4 +29,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/staff', [AdminController::class, 'getAllStaff']);
         Route::post('/staff', [AdminController::class, 'createOutreachMember']);
     });
+});
+
+Route::middleware('auth:staff')->prefix('staff')->group(function () {
+    Route::get('/reports', [StaffController::class, 'getAssignedReports']);
+    Route::get('/reports/{report}', [StaffController::class, 'getReportDetails']);
+    Route::put('/reports/{report}', [StaffController::class, 'updateReportStatus']);
+    Route::post('/reports/{report}/notes', [StaffController::class, 'addFieldNotes']);
+    Route::post('/reports/{report}/media', [StaffController::class, 'uploadMedia']);
 });

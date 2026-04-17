@@ -35,6 +35,34 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> signup({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final data = await ApiService.signupUser(
+        name: name,
+        email: email,
+        password: password,
+      );
+      _token = data['token'];
+      _user = User.fromJson(data['user']);
+      _mode = AuthMode.user;
+      await _save('user');
+    } catch (e) {
+      _error = e.toString();
+      throw Exception(_error);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// POST /api/login  (community user)
   Future<bool> loginUser(String email, String password) async {
     return _doLogin(email, password, AuthMode.user);

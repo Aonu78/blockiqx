@@ -32,6 +32,11 @@ class StaffController extends Controller
     public function getAssignedReports()
     {
         $staff = Auth::guard('staff')->user();
+
+        if (!$staff) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
         $reports = Report::with(['organization', 'assignedStaff'])
             ->where('assigned_to', $staff->id)
             ->latest()
