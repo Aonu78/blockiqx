@@ -306,6 +306,39 @@ class ApiService {
     }
   }
 
+  /// POST /api/staff/reports/{id}/notes
+  static Future<Map<String, dynamic>> addReportNote({
+    required String token,
+    required int reportId,
+    required String note,
+  }) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse(ApiConfig.addReportNote(reportId)),
+            headers: ApiConfig.jsonHeaders(token),
+            body: jsonEncode({'notes': note}),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      final data = _decode(response);
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return data;
+      }
+      if (response.statusCode == 401) {
+        throw ApiException('Session expired. Please log in again.',
+            statusCode: 401);
+      }
+      throw ApiException(data['message'] ?? 'Failed to add note.',
+          statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
   // ─── ADMIN ────────────────────────────────────────────────────────────────
 
   /// GET /api/admin/analytics/map-view

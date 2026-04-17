@@ -17,6 +17,7 @@ class ApiConfig {
   static String get staffReports => '$baseUrl/staff/reports';
   static String staffReportDetail(int id) => '$baseUrl/staff/reports/$id';
   static String updateReport(int id) => '$baseUrl/staff/reports/$id';
+  static String addReportNote(int id) => '$baseUrl/staff/reports/$id/notes';
 
   // ── Admin ─────────────────────────────────────────────────────────────────
   static String get adminMapView => '$baseUrl/admin/analytics/map-view';

@@ -46,6 +46,10 @@ return [
             'driver' => 'session', // or sanctum if only API
             'provider' => 'staff',
         ],
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'staff',
+        ],
     ],
 
     'providers' => [
@@ -57,6 +61,7 @@ return [
             'driver' => 'eloquent',
             'model' => \App\Models\Staff::class,
         ],
+        
     ],
 
     /*
