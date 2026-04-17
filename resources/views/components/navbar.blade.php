@@ -45,12 +45,14 @@
                     <a href="javascript:;" class="nav-link text-body p-0 position-relative" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-bell cursor-pointer"></i>
                         @if (($navbarUnreadNotificationsCount ?? 0) > 0)
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span id="navbar-notification-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                 {{ $navbarUnreadNotificationsCount > 9 ? '9+' : $navbarUnreadNotificationsCount }}
                             </span>
+                        @else
+                            <span id="navbar-notification-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;"></span>
                         @endif
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" style="min-width: 22rem;">
+                    <ul id="navbar-notification-list" class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" style="min-width: 22rem;">
                         <li class="px-3 pb-2">
                             <h6 class="text-sm mb-0">{{ ($navbarIsStaff ?? false) ? 'Staff notifications' : 'Admin notifications' }}</h6>
                             <p class="text-xs text-secondary mb-0">{{ ($navbarUnreadNotificationsCount ?? 0) }} unread</p>

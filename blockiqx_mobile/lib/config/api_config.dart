@@ -22,6 +22,11 @@ class ApiConfig {
   // ── Admin ─────────────────────────────────────────────────────────────────
   static String get adminMapView => '$baseUrl/admin/analytics/map-view';
 
+  // ── Notifications ──────────────────────────────────────────────────────────
+  static String get notifications => '$baseUrl/notifications';
+  static String markNotificationRead(String id) => '$baseUrl/notifications/$id/read';
+  static String get notificationStream => '$baseUrl/notifications/stream';
+
   // ── Headers ───────────────────────────────────────────────────────────────
   static Map<String, String> headers(String? token) {
     final map = <String, String>{'Accept': 'application/json'};

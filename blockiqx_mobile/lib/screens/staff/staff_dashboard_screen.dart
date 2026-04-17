@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/report.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/notification_provider.dart';
 import '../../services/api_service.dart';
 import '../../widgets/report_card.dart';
 import '../auth/role_select_screen.dart';
+import '../notifications_screen.dart';
 import 'report_detail_screen.dart';
 
 class StaffDashboardScreen extends StatefulWidget {
@@ -40,6 +42,12 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen>
         vsync: this, duration: const Duration(milliseconds: 600));
 
     _loadReports();
+
+    // Start notification polling
+    final token = context.read<AuthProvider>().token ?? '';
+    if (token.isNotEmpty) {
+      context.read<NotificationProvider>().startPolling(token);
+    }
   }
 
   @override
@@ -111,6 +119,15 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen>
             builder: (_, __) => _DashboardHeader(
               name: staffName,
               bgAnim: _bgCtrl.value,
+              unreadCount: context.watch<NotificationProvider>().unreadCount,
+              onOpenNotifications: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
+                  ),
+                );
+              },
               onRefresh: _loadReports,
               onLogout: () async {
                 await auth.logout();
@@ -229,12 +246,16 @@ class _DashboardHeader extends StatelessWidget {
   final double bgAnim;
   final VoidCallback onRefresh;
   final VoidCallback onLogout;
+  final VoidCallback onOpenNotifications;
+  final int unreadCount;
 
   const _DashboardHeader({
     required this.name,
     required this.bgAnim,
     required this.onRefresh,
     required this.onLogout,
+    required this.onOpenNotifications,
+    required this.unreadCount,
   });
 
   @override
@@ -301,6 +322,43 @@ class _DashboardHeader extends StatelessWidget {
                               ),
                               child: const Icon(Icons.refresh,
                                   color: Colors.white70, size: 18),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: onOpenNotifications,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(255, 255, 255, 0.12),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(Icons.notifications,
+                                      color: Colors.white70, size: 18),
+                                ),
+                                if (unreadCount > 0)
+                                  Positioned(
+                                    right: 2,
+                                    top: 2,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.redAccent,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        unreadCount > 9 ? '9+' : unreadCount.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                           const SizedBox(width: 8),

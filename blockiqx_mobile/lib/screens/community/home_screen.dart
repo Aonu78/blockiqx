@@ -2,7 +2,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/notification_provider.dart';
 import '../auth/role_select_screen.dart';
+import '../notifications_screen.dart';
 import 'submit_report_screen.dart';
 import 'nearby_resources_screen.dart';
 
@@ -89,6 +91,15 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                 name: name,
                 greeting: greeting,
                 bgAnim: _bgCtrl.value,
+                unreadCount: context.watch<NotificationProvider>().unreadCount,
+                onOpenNotifications: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
                 onLogout: () async {
                   await auth.logout();
                   if (context.mounted) {
@@ -234,12 +245,16 @@ class _HomeHeader extends StatelessWidget {
   final String greeting;
   final double bgAnim;
   final VoidCallback onLogout;
+  final VoidCallback onOpenNotifications;
+  final int unreadCount;
 
   const _HomeHeader({
     required this.name,
     required this.greeting,
     required this.bgAnim,
     required this.onLogout,
+    required this.onOpenNotifications,
+    required this.unreadCount,
   });
 
   @override
@@ -298,17 +313,58 @@ class _HomeHeader extends StatelessWidget {
                           ),
                         ],
                       ),
-                      GestureDetector(
-                        onTap: onLogout,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(255, 255, 255, 0.12),
-                            borderRadius: BorderRadius.circular(10),
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: onOpenNotifications,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(255, 255, 255, 0.12),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(Icons.notifications,
+                                      color: Colors.white70, size: 18),
+                                ),
+                                if (unreadCount > 0)
+                                  Positioned(
+                                    right: 2,
+                                    top: 2,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.redAccent,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        unreadCount > 9 ? '9+' : unreadCount.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                          child: const Icon(Icons.logout,
-                              color: Colors.white70, size: 18),
-                        ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: onLogout,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(255, 255, 255, 0.12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.logout,
+                                  color: Colors.white70, size: 18),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

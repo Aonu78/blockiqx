@@ -68,8 +68,6 @@ class StaffControllerApi extends Controller
             ]);
         }
 
-        broadcast(new \App\Events\ReportStatusUpdated($report))->toOthers();
-
         if ($request->wantsJson()) {
             return response()->json([
                 'message' => 'Report status updated successfully',

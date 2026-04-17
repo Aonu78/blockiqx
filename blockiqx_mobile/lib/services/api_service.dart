@@ -12,6 +12,7 @@ class ApiException implements Exception {
 }
 
 class ApiService {
+  static final http.Client _httpClient = http.Client();
   // ─── AUTH ─────────────────────────────────────────────────────────────────
 
   /// POST /api/register
@@ -331,6 +332,52 @@ class ApiService {
       }
       throw ApiException(data['message'] ?? 'Failed to add note.',
           statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
+  /// GET /api/notifications
+  static Future<Map<String, dynamic>> getNotifications(String token) async {
+    try {
+      final response = await http
+          .get(Uri.parse(ApiConfig.notifications), headers: ApiConfig.headers(token))
+          .timeout(const Duration(seconds: 15));
+
+      final data = _decode(response);
+      if (response.statusCode == 200) return data;
+      if (response.statusCode == 401) {
+        throw ApiException('Session expired. Please log in again.',
+            statusCode: 401);
+      }
+      throw ApiException(data['message'] ?? 'Failed to fetch notifications.',
+          statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
+  /// PUT /api/notifications/{id}/read
+  static Future<void> markNotificationRead(String token, String notificationId) async {
+    try {
+      final response = await http
+          .put(
+            Uri.parse(ApiConfig.markNotificationRead(notificationId)),
+            headers: ApiConfig.headers(token),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode != 200) {
+        final data = _decode(response);
+        throw ApiException(data['message'] ?? 'Failed to mark notification as read.',
+            statusCode: response.statusCode);
+      }
     } on ApiException {
       rethrow;
     } catch (e) {

@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Report;
 use App\Models\Staff;
 use App\Models\User;
+use App\Events\ReportStatusUpdated;
 use App\Notifications\ReportActivityNotification;
 use App\Notifications\ReportAssigned;
 use Illuminate\Support\Facades\Notification;
@@ -58,6 +59,15 @@ class ReportObserver
                     ['report_id' => $report->id, 'status' => $report->status]
                 )
             );
+
+            if ($report->user) {
+                $report->user->notify(new ReportActivityNotification(
+                    'Report status updated',
+                    'Your report #' . $report->id . ' is now ' . $report->status . '.',
+                    null,
+                    ['report_id' => $report->id, 'status' => $report->status]
+                ));
+            }
         }
 
         if ($report->wasChanged('assigned_to') && $report->assignedStaff) {
@@ -95,6 +105,8 @@ class ReportObserver
                 )
             );
         }
+
+        broadcast(new ReportStatusUpdated($report))->toOthers();
     }
 
     /**

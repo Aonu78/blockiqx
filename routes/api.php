@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/staff', [AdminController::class, 'getAllStaff']);
         Route::post('/staff', [AdminController::class, 'createOutreachMember']);
     });
-});
+
+    Route::get('/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'index']);
+    Route::put('/notifications/{notification}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);    Route::get('/notifications/stream', [\\App\\Http\\Controllers\\Api\\NotificationStreamController::class, 'stream']);});
 
 
