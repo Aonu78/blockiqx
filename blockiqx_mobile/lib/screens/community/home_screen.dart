@@ -23,9 +23,9 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
   @override
   void initState() {
     super.initState();
-    _bgCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 10))
-      ..repeat(reverse: true);
+    _bgCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 10))
+          ..repeat(reverse: true);
 
     _entranceCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 900));
@@ -47,8 +47,7 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
       final start = i * 0.15;
       final end = (start + 0.4).clamp(0.0, 1.0);
       return CurvedAnimation(
-          parent: _entranceCtrl,
-          curve: Interval(start, end));
+          parent: _entranceCtrl, curve: Interval(start, end));
     });
 
     _entranceCtrl.forward();
@@ -131,10 +130,7 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                             gradient: const LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFF1565C0),
-                                Color(0xFF1E88E5)
-                              ],
+                              colors: [Color(0xFF1565C0), Color(0xFF1E88E5)],
                             ),
                             onTap: () => Navigator.push(
                               context,
@@ -151,10 +147,7 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                             gradient: const LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFF1B5E20),
-                                Color(0xFF43A047)
-                              ],
+                              colors: [Color(0xFF1B5E20), Color(0xFF43A047)],
                             ),
                             onTap: () => Navigator.push(
                               context,
@@ -204,8 +197,7 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                               _InfoTile(
                                 icon: Icons.notifications_outlined,
                                 iconColor: Color(0xFFE65100),
-                                text:
-                                    'Track your report status in real time',
+                                text: 'Track your report status in real time',
                                 isLast: true,
                               ),
                             ],
@@ -226,10 +218,9 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
   PageRouteBuilder _slideRoute(Widget page) => PageRouteBuilder(
         pageBuilder: (_, __, ___) => page,
         transitionsBuilder: (_, anim, __, child) => SlideTransition(
-          position: Tween<Offset>(
-                  begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(
-                  parent: anim, curve: Curves.easeOutCubic)),
+          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
+              .animate(
+                  CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 350),
@@ -259,10 +250,10 @@ class _HomeHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.lerp(const Color(0xFF0D47A1), const Color(0xFF1565C0),
-                bgAnim)!,
-            Color.lerp(const Color(0xFF1565C0), const Color(0xFF1E88E5),
-                bgAnim)!,
+            Color.lerp(
+                const Color(0xFF0D47A1), const Color(0xFF1565C0), bgAnim)!,
+            Color.lerp(
+                const Color(0xFF1565C0), const Color(0xFF1E88E5), bgAnim)!,
           ],
         ),
       ),
@@ -275,8 +266,7 @@ class _HomeHeader extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(22, 10, 22, 24),
+              padding: const EdgeInsets.fromLTRB(22, 10, 22, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -326,8 +316,8 @@ class _HomeHeader extends StatelessWidget {
                   // Greeting
                   Text(
                     greeting,
-                    style: TextStyle(
-                        color: const Color.fromRGBO(255, 255, 255, 0.6),
+                    style: const TextStyle(
+                        color: Color.fromRGBO(255, 255, 255, 0.6),
                         fontSize: 13),
                   ),
                   const SizedBox(height: 2),
@@ -341,22 +331,21 @@ class _HomeHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: const Color.fromRGBO(255, 255, 255, 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.circle,
-                            color: Color(0xFF69F0AE), size: 7),
-                        const SizedBox(width: 6),
+                        Icon(Icons.circle, color: Color(0xFF69F0AE), size: 7),
+                        SizedBox(width: 6),
                         Text(
                           'Reporting platform is active',
                           style: TextStyle(
-                              color: const Color.fromRGBO(255, 255, 255, 0.7),
+                              color: Color.fromRGBO(255, 255, 255, 0.7),
                               fontSize: 11),
                         ),
                       ],
@@ -383,10 +372,8 @@ class _HeaderArcsPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     for (var i = 0; i < 4; i++) {
-      final r =
-          60.0 + i * 45 + math.sin(t * math.pi + i * 0.8) * 8;
-      canvas.drawCircle(
-          Offset(size.width + 10, -10), r, paint);
+      final r = 60.0 + i * 45 + math.sin(t * math.pi + i * 0.8) * 8;
+      canvas.drawCircle(Offset(size.width + 10, -10), r, paint);
     }
   }
 
@@ -477,8 +464,8 @@ class _ActionCardState extends State<_ActionCard>
                       fontSize: 14)),
               const SizedBox(height: 3),
               Text(widget.subtitle,
-                  style: TextStyle(
-                      color: const Color.fromRGBO(255, 255, 255, 0.65),
+                  style: const TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 0.65),
                       fontSize: 11)),
             ],
           ),

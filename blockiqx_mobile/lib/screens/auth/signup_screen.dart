@@ -40,6 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
             name: _nameCtrl.text.trim(),
             email: _emailCtrl.text.trim(),
             password: _passwordCtrl.text.trim(),
+            passwordConfirmation: _confirmPassCtrl.text.trim(),
           );
       if (mounted) {
         Navigator.of(context).pop();

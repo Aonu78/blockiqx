@@ -14,6 +14,46 @@ class ApiException implements Exception {
 class ApiService {
   // ─── AUTH ─────────────────────────────────────────────────────────────────
 
+  /// POST /api/register
+  static Future<Map<String, dynamic>> signupUser({
+    required String name,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse(ApiConfig.register),
+            headers: ApiConfig.jsonHeaders(null),
+            body: jsonEncode({
+              'name': name,
+              'email': email,
+              'password': password,
+              'password_confirmation': passwordConfirmation,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      final data = _decode(response);
+      if (response.statusCode == 201 || response.statusCode == 200) return data;
+      if (data['errors'] != null) {
+        final errors = data['errors'] as Map<String, dynamic>;
+        final first = errors.values.first;
+        throw ApiException(
+            first is List ? first.first.toString() : first.toString(),
+            statusCode: response.statusCode);
+      }
+      throw ApiException(data['message'] ?? 'Failed to create account.',
+          statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
   /// POST /api/login  — community user OR admin
   static Future<Map<String, dynamic>> login(
       String email, String password) async {

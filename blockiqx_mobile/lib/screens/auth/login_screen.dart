@@ -185,10 +185,10 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                Text(
+                                const Text(
                                   'Sign in to report and track incidents',
                                   style: TextStyle(
-                                      color: const Color.fromRGBO(255, 255, 255, 0.45),
+                                      color: Color.fromRGBO(255, 255, 255, 0.45),
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 32),
@@ -265,13 +265,13 @@ class _LoginScreenState extends State<LoginScreen>
                                             isGuest: true)),
                                   ),
                                   child: RichText(
-                                    text: TextSpan(
+                                    text: const TextSpan(
                                       text: "Don't have an account? ",
                                       style: TextStyle(
                                           color:
-                                              const Color.fromRGBO(255, 255, 255, 0.4),
+                                             Color.fromRGBO(255, 255, 255, 0.4),
                                           fontSize: 13),
-                                      children: const [
+                                      children: [
                                         TextSpan(
                                           text: 'Submit as Guest',
                                           style: TextStyle(

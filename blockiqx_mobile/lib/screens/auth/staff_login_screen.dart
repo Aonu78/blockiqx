@@ -171,10 +171,10 @@ class _StaffLoginScreenState extends State<StaffLoginScreen>
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                Text(
+                                const Text(
                                   'Sign in to manage your assigned reports',
                                   style: TextStyle(
-                                      color: const Color.fromRGBO(255, 255, 255, 0.45),
+                                      color: Color.fromRGBO(255, 255, 255, 0.45),
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 32),

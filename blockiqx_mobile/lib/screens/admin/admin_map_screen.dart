@@ -309,8 +309,8 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
             Text(adminName,
-                style: TextStyle(
-                    color: const Color.fromRGBO(255, 255, 255, 0.6), fontSize: 12)),
+                style: const TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 0.6), fontSize: 12)),
           ],
         ),
         actions: [
@@ -562,9 +562,9 @@ class _MapTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                    color: const Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 8)
+                    color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 8)
               ],
             ),
             child: const Column(

@@ -198,7 +198,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
               if (_errorMessage != null)
                 _StatusBanner(message: _errorMessage!, isSuccess: false),
               if (widget.isGuest) ...[
-                _SectionTitle('Contact Info'),
+                const _SectionTitle('Contact Info'),
                 _buildField(
                   controller: _emailCtrl,
                   label: 'Email Address',
@@ -218,7 +218,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                 ),
                 const SizedBox(height: 22),
               ],
-              _SectionTitle('Incident Details'),
+              const _SectionTitle('Incident Details'),
               DropdownButtonFormField<String>(
                 value: _selectedType,
                 hint: const Text('Select Incident Type'),
@@ -240,7 +240,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                     'Describe the incident in detail...', Icons.description_outlined),
               ),
               const SizedBox(height: 22),
-              _SectionTitle('Location'),
+              const _SectionTitle('Location'),
               Row(
                 children: [
                   Expanded(
@@ -284,7 +284,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                 ),
               ],
               const SizedBox(height: 22),
-              _SectionTitle('Media (Optional)'),
+              const _SectionTitle('Media (Optional)'),
               InkWell(
                 onTap: _pickMedia,
                 borderRadius: BorderRadius.circular(12),

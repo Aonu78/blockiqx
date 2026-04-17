@@ -39,6 +39,7 @@ class AuthProvider with ChangeNotifier {
     required String name,
     required String email,
     required String password,
+    required String passwordConfirmation,
   }) async {
     _isLoading = true;
     _error = null;
@@ -49,6 +50,7 @@ class AuthProvider with ChangeNotifier {
         name: name,
         email: email,
         password: password,
+        passwordConfirmation: passwordConfirmation,
       );
       _token = data['token'];
       _user = User.fromJson(data['user']);

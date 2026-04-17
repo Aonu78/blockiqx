@@ -321,10 +321,10 @@ class _DashboardHeader extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  const Text(
                     'Welcome back,',
                     style: TextStyle(
-                        color: const Color.fromRGBO(255, 255, 255, 0.6), fontSize: 13),
+                        color: Color.fromRGBO(255, 255, 255, 0.6), fontSize: 13),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -654,8 +654,8 @@ class _EmptyState extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(67, 160, 71, 0.08),
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(67, 160, 71, 0.08),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.assignment_outlined,

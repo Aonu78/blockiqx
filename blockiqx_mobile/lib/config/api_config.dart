@@ -1,11 +1,10 @@
-import 'dart:io';
-
 class ApiConfig {
   static String get baseUrl {
     return 'https://deeppink-bat-985227.hostingersite.com/api'; // Use this for Android emulator
   }
 
   // ── Auth ──────────────────────────────────────────────────────────────────
+  static String get register => '$baseUrl/register';
   static String get login => '$baseUrl/login';
   static String get staffLogin => '$baseUrl/staff/login';
   static String get logout => '$baseUrl/logout';

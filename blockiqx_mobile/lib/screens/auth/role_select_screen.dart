@@ -121,9 +121,9 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
-                                      color: const Color.fromRGBO(30, 136, 229, 0.5),
+                                      color: Color.fromRGBO(30, 136, 229, 0.5),
                                       blurRadius: 24,
                                       spreadRadius: 2,
                                     ),
@@ -150,11 +150,11 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
+                              const Text(
                                 'Choose how you\'re accessing the platform',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: const Color.fromRGBO(255, 255, 255, 0.4),
+                                    color: Color.fromRGBO(255, 255, 255, 0.4),
                                     fontSize: 12),
                               ),
                             ],
@@ -234,17 +234,17 @@ class _RoleSelectScreenState extends State<RoleSelectScreen>
                                   color: const Color.fromRGBO(255, 255, 255, 0.12)),
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.person_outline,
-                                    color: const Color.fromRGBO(255, 255, 255, 0.5),
+                                    color: Color.fromRGBO(255, 255, 255, 0.5),
                                     size: 18),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 Text(
                                   'Continue as Guest',
                                   style: TextStyle(
-                                      color: const Color.fromRGBO(255, 255, 255, 0.5),
+                                      color: Color.fromRGBO(255, 255, 255, 0.5),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -381,8 +381,8 @@ class _RoleCardState extends State<_RoleCard>
                             fontSize: 15)),
                     const SizedBox(height: 3),
                     Text(widget.subtitle,
-                        style: TextStyle(
-                            color: const Color.fromRGBO(255, 255, 255, 0.45),
+                        style: const TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 0.45),
                             fontSize: 12)),
                   ],
                 ),

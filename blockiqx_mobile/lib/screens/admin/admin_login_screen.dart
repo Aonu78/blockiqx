@@ -26,18 +26,16 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
   @override
   void initState() {
     super.initState();
-    _bgCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 8))
-      ..repeat(reverse: true);
+    _bgCtrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 8))
+          ..repeat(reverse: true);
     _cardCtrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 700));
     _cardSlide = Tween<Offset>(
       begin: const Offset(0, 0.4),
       end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOutCubic));
-    _cardFade =
-        CurvedAnimation(parent: _cardCtrl, curve: Curves.easeIn);
+    ).animate(CurvedAnimation(parent: _cardCtrl, curve: Curves.easeOutCubic));
+    _cardFade = CurvedAnimation(parent: _cardCtrl, curve: Curves.easeIn);
     _cardCtrl.forward();
   }
 
@@ -54,8 +52,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
     if (!_formKey.currentState!.validate()) return;
     final auth = context.read<AuthProvider>();
     auth.clearError();
-    final ok = await auth.loginAdmin(
-        _emailCtrl.text.trim(), _passwordCtrl.text);
+    final ok =
+        await auth.loginAdmin(_emailCtrl.text.trim(), _passwordCtrl.text);
     if (ok && mounted) {
       Navigator.pushAndRemoveUntil(
         context,
@@ -91,8 +89,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                 Color.lerp(const Color(0xFF100718), const Color(0xFF0D1B2A),
                     _bgCtrl.value)!,
                 Color.lerp(const Color.fromRGBO(74, 20, 140, 0.25),
-                    const Color.fromRGBO(106, 27, 154, 0.1),
-                    _bgCtrl.value)!,
+                    const Color.fromRGBO(106, 27, 154, 0.1), _bgCtrl.value)!,
               ],
             ),
           ),
@@ -100,8 +97,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
             children: [
               Positioned.fill(
                 child: CustomPaint(
-                    painter:
-                        LoginBgPainter(_bgCtrl.value, _accent)),
+                    painter: LoginBgPainter(_bgCtrl.value, _accent)),
               ),
               SafeArea(
                 child: Column(
@@ -123,8 +119,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 24),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: SlideTransition(
                           position: _cardSlide,
                           child: FadeTransition(
@@ -136,19 +131,18 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 14, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: const Color.fromRGBO(123, 31, 162, 0.15),
+                                    color: const Color.fromRGBO(
+                                        123, 31, 162, 0.15),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                        color: const Color.fromRGBO(123, 31, 162, 0.3)),
+                                        color: const Color.fromRGBO(
+                                            123, 31, 162, 0.3)),
                                   ),
                                   child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
-                                          Icons
-                                              .admin_panel_settings_outlined,
-                                          color: _accentLight,
-                                          size: 16),
+                                      Icon(Icons.admin_panel_settings_outlined,
+                                          color: _accentLight, size: 16),
                                       SizedBox(width: 6),
                                       Text('Admin Access',
                                           style: TextStyle(
@@ -160,11 +154,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                 ),
                                 const SizedBox(height: 20),
                                 ShaderMask(
-                                  shaderCallback: (b) =>
-                                      const LinearGradient(colors: [
-                                    _accentLight,
-                                    Colors.white
-                                  ]).createShader(b),
+                                  shaderCallback: (b) => const LinearGradient(
+                                          colors: [_accentLight, Colors.white])
+                                      .createShader(b),
                                   child: const Text(
                                     'Admin Login',
                                     style: TextStyle(
@@ -174,10 +166,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                Text(
+                                const Text(
                                   'Access analytics map and reports overview',
                                   style: TextStyle(
-                                      color: const Color.fromRGBO(255, 255, 255, 0.45),
+                                      color: Color.fromRGBO(
+                                          255, 255, 255, 0.45),
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 32),
@@ -225,8 +218,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                         ),
                                         if (auth.error != null) ...[
                                           const SizedBox(height: 14),
-                                          ErrorBanner(
-                                              message: auth.error!),
+                                          ErrorBanner(message: auth.error!),
                                         ],
                                         const SizedBox(height: 24),
                                         GradientButton(
@@ -238,9 +230,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen>
                                               _accent,
                                             ],
                                           ),
-                                          onTap: auth.isLoading
-                                              ? null
-                                              : _submit,
+                                          onTap:
+                                              auth.isLoading ? null : _submit,
                                         ),
                                       ],
                                     ),
