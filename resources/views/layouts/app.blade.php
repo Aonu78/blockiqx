@@ -4,7 +4,6 @@
 
 <head>
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <meta name="api-token" content="{{ Auth::check() ? Auth::user()->currentAccessToken()->plainTextToken : '' }}">
 
   <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
   <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
@@ -65,48 +64,14 @@
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{{ asset('assets/js/soft-ui-dashboard.min.js') }}"></script>
   <script>
-    // Server-Sent Events for real-time notifications
+    // Server-Sent Events for real-time notifications (no Pusher)
     (function () {
-      const token = document.querySelector('meta[name="api-token"]');
-      if (!token) return;
-
-      const eventSource = new EventSource('/api/notifications/stream?token=' + token.content);
-
-      eventSource.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        if (data.type === 'notification') {
-          // Show notification
-          showNotification(data.data.title, data.data.message);
-          // Update notification count
-          updateNotificationCount();
-        }
-      };
-
-      eventSource.onerror = function() {
-        console.log('SSE connection error');
-      };
-
-      function showNotification(title, message) {
-        // Simple notification display
-        const notification = document.createElement('div');
-        notification.className = 'alert alert-info position-fixed';
-        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
-        notification.innerHTML = '<strong>' + title + '</strong><br>' + message;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 5000);
-      }
-
-      function updateNotificationCount() {
-        // Refresh the page or update the navbar
-        location.reload();
-      }
-    })();
-  </script>
-
-      const channel = pusher.subscribe('reports');
+      // For session-authenticated users, we don't have an API token
+      // But we can still connect using cookies (session)
       const countElement = document.querySelector('#navbar-notification-count');
       const listElement = document.querySelector('#navbar-notification-list');
 
+      // Create toast notification
       const createToast = (title, message) => {
         const toast = document.createElement('div');
         toast.className = 'position-fixed top-0 end-0 p-3';
@@ -126,6 +91,7 @@
         setTimeout(() => toast.remove(), 7000);
       };
 
+      // Update notification badge count
       const updateBadge = (count) => {
         if (!countElement) return;
         if (count > 0) {
@@ -136,6 +102,7 @@
         }
       };
 
+      // Prepend notification to list
       const prependNotification = (payload) => {
         if (!listElement) return;
 
@@ -164,19 +131,38 @@
         listElement.prepend(wrapper);
       };
 
-      const handleEvent = (data) => {
-        if (!data || !data.type || !data.title) {
-          return;
-        }
+      // Handle incoming notification
+      const handleNotification = (data) => {
+        if (!data || !data.type || !data.data) return;
+
+        const payload = data.data;
+        if (!payload.title || !payload.message) return;
 
         const currentCount = countElement && countElement.textContent ? parseInt(countElement.textContent, 10) || 0 : 0;
         updateBadge(currentCount + 1);
-        prependNotification(data);
-        createToast(data.title, data.message);
+        prependNotification(payload);
+        createToast(payload.title, payload.message);
       };
 
-      channel.bind('report.created', handleEvent);
-      channel.bind('report.status.updated', handleEvent);
+      // Connect to SSE stream (works for both session and API auth)
+      const eventSource = new EventSource('/api/notifications/stream');
+
+      eventSource.onmessage = function(event) {
+        try {
+          const data = JSON.parse(event.data);
+          handleNotification(data);
+        } catch (e) {
+          console.error('Error parsing notification:', e);
+        }
+      };
+
+      eventSource.onerror = function() {
+        console.log('SSE connection closed or error');
+      };
+
+      window.addEventListener('beforeunload', function() {
+        eventSource.close();
+      });
     })();
   </script>
 </body>

@@ -38,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/notifications', [\App\Http\Controllers\Api\NotificationController::class, 'index']);
-    Route::put('/notifications/{notification}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);    Route::get('/notifications/stream', [\\App\\Http\\Controllers\\Api\\NotificationStreamController::class, 'stream']);});
+    Route::put('/notifications/{notification}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);
+});
+
+// SSE Notifications endpoint (accessible to both session and API auth)
+Route::get('/notifications/stream', [\App\Http\Controllers\Api\NotificationStreamController::class, 'stream'])
+    ->middleware(['auth:sanctum,web,staff']);
 
 

@@ -10,20 +10,20 @@ class NotificationStreamController extends Controller
 {
     public function stream(Request $request)
     {
-        $token = $request->query('token');
-        if (!$token) {
-            return response('Unauthorized', 401);
+        // Try API token auth first
+        $user = Auth::guard('sanctum')->user();
+        
+        // Fallback to session auth if no API token
+        if (!$user) {
+            $user = Auth::guard('web')->user() ?? Auth::guard('staff')->user();
         }
 
-        $user = \Laravel\Sanctum\PersonalAccessToken::findToken($token)?->tokenable;
         if (!$user) {
             return response('Unauthorized', 401);
         }
 
-        \Auth::login($user);
-
         return response()->stream(function () use ($user) {
-            $lastNotificationId = request()->query('last_id', 0);
+            $lastNotificationId = $request->query('last_id', 0);
 
             while (true) {
                 $notifications = $user->notifications()
