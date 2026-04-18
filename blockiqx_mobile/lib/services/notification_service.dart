@@ -1,6 +1,4 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:pusher_client/pusher_client.dart';
-import 'api_config.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
@@ -33,20 +31,5 @@ class NotificationService {
       body,
       const NotificationDetails(android: androidDetails, iOS: iosDetails),
     );
-  }
-
-  PusherClient createPusherClient() {
-    final options = PusherOptions(
-      cluster: ApiConfig.pusherCluster,
-      encrypted: true,
-    );
-
-    final pusher = PusherClient(
-      ApiConfig.pusherKey,
-      options,
-      enableLogging: false,
-    );
-
-    return pusher;
   }
 }

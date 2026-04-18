@@ -21,6 +21,8 @@ class ApiConfig {
 
   // ── Admin ─────────────────────────────────────────────────────────────────
   static String get adminMapView => '$baseUrl/admin/analytics/map-view';
+  static String adminUpdateReport(int id) => '$baseUrl/admin/reports/$id';
+
 
   // ── Notifications ──────────────────────────────────────────────────────────
   static String get notifications => '$baseUrl/notifications';

@@ -12,7 +12,6 @@ class ApiException implements Exception {
 }
 
 class ApiService {
-  static final http.Client _httpClient = http.Client();
   // ─── AUTH ─────────────────────────────────────────────────────────────────
 
   /// POST /api/register
@@ -430,6 +429,46 @@ class ApiService {
       throw ApiException(
           data['message'] ?? 'Failed to fetch analytics data.',
           statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateReport(String token, int reportId, {
+    int? staffId,
+    String? status,
+    String? note,
+  }) async {
+    final body = <String, dynamic>{};
+    if (staffId != null) body['staff_id'] = staffId;
+    if (status != null) body['status'] = status;
+    if (note != null && note.isNotEmpty) body['note'] = note;
+
+    if (body.isEmpty) {
+      throw ApiException('No update data provided.');
+    }
+
+    final uri = Uri.parse(ApiConfig.adminUpdateReport(reportId));
+
+    try {
+      final response = await http.put(
+        uri,
+        headers: ApiConfig.jsonHeaders(token),
+        body: jsonEncode(body),
+      ).timeout(const Duration(seconds: 15));
+
+      final data = _decode(response);
+      if (response.statusCode == 200) return data;
+      if (response.statusCode == 401) {
+        throw ApiException('Session expired. Please log in again.', statusCode: 401);
+      }
+      if (response.statusCode == 403) {
+        throw ApiException('Access denied. Admin or super-admin role required.', statusCode: 403);
+      }
+      throw ApiException(data['message'] ?? 'Failed to update report.', statusCode: response.statusCode);
     } on ApiException {
       rethrow;
     } catch (e) {

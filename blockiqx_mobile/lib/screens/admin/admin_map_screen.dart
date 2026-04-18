@@ -125,13 +125,12 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                 ),
                 const SizedBox(height: 16),
                 const Text('Filter Reports',
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 20),
                 const Text('Status',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0D1B2A))),
+                        fontWeight: FontWeight.w600, color: Color(0xFF0D1B2A))),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -139,22 +138,19 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                     FilterChip(
                       label: const Text('All'),
                       selected: tmpStatus == null,
-                      onSelected: (_) =>
-                          setModal(() => tmpStatus = null),
+                      onSelected: (_) => setModal(() => tmpStatus = null),
                     ),
                     ..._statusOptions.map((s) => FilterChip(
                           label: Text(s),
                           selected: tmpStatus == s,
-                          onSelected: (_) =>
-                              setModal(() => tmpStatus = s),
+                          onSelected: (_) => setModal(() => tmpStatus = s),
                         )),
                   ],
                 ),
                 const SizedBox(height: 20),
                 const Text('Incident Type',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0D1B2A))),
+                        fontWeight: FontWeight.w600, color: Color(0xFF0D1B2A))),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -162,22 +158,19 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                     FilterChip(
                       label: const Text('All'),
                       selected: tmpType == null,
-                      onSelected: (_) =>
-                          setModal(() => tmpType = null),
+                      onSelected: (_) => setModal(() => tmpType = null),
                     ),
                     ..._typeOptions.map((t) => FilterChip(
                           label: Text(t),
                           selected: tmpType == t,
-                          onSelected: (_) =>
-                              setModal(() => tmpType = t),
+                          onSelected: (_) => setModal(() => tmpType = t),
                         )),
                   ],
                 ),
                 const SizedBox(height: 20),
                 const Text('Date Range',
                     style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF0D1B2A))),
+                        fontWeight: FontWeight.w600, color: Color(0xFF0D1B2A))),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -192,12 +185,11 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                             lastDate: DateTime.now(),
                           );
                           if (d != null) {
-                            setModal(() => tmpFrom =
-                                DateFormat('yyyy-MM-dd').format(d));
+                            setModal(() =>
+                                tmpFrom = DateFormat('yyyy-MM-dd').format(d));
                           }
                         },
-                        icon: const Icon(Icons.calendar_today,
-                            size: 14),
+                        icon: const Icon(Icons.calendar_today, size: 14),
                         label: Text(
                           tmpFrom ?? 'From',
                           style: const TextStyle(fontSize: 12),
@@ -215,12 +207,11 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                             lastDate: DateTime.now(),
                           );
                           if (d != null) {
-                            setModal(() => tmpTo =
-                                DateFormat('yyyy-MM-dd').format(d));
+                            setModal(() =>
+                                tmpTo = DateFormat('yyyy-MM-dd').format(d));
                           }
                         },
-                        icon: const Icon(Icons.calendar_today,
-                            size: 14),
+                        icon: const Icon(Icons.calendar_today, size: 14),
                         label: Text(
                           tmpTo ?? 'To',
                           style: const TextStyle(fontSize: 12),
@@ -231,8 +222,10 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                 ),
                 if (tmpFrom != null || tmpTo != null)
                   TextButton(
-                    onPressed: () =>
-                        setModal(() { tmpFrom = null; tmpTo = null; }),
+                    onPressed: () => setModal(() {
+                      tmpFrom = null;
+                      tmpTo = null;
+                    }),
                     child: const Text('Clear dates'),
                   ),
                 const SizedBox(height: 24),
@@ -355,8 +348,7 @@ class _AdminMapScreenState extends State<AdminMapScreen>
               if (context.mounted) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
-                      builder: (_) => const RoleSelectScreen()),
+                  MaterialPageRoute(builder: (_) => const RoleSelectScreen()),
                   (_) => false,
                 );
               }
@@ -397,8 +389,7 @@ class _AdminMapScreenState extends State<AdminMapScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(
-                      color: Color(0xFF6A1B9A)),
+                  CircularProgressIndicator(color: Color(0xFF6A1B9A)),
                   SizedBox(height: 12),
                   Text('Loading analytics…',
                       style: TextStyle(color: Colors.grey)),
@@ -411,7 +402,11 @@ class _AdminMapScreenState extends State<AdminMapScreen>
                   controller: _tabController,
                   children: [
                     _MapTab(reports: _reports, staff: _staff),
-                    _ListTab(reports: _reports, staff: _staff),
+                    _ListTab(
+                      reports: _reports,
+                      staff: _staff,
+                      onDataReload: _loadData,
+                    ),
                   ],
                 ),
     );
@@ -456,8 +451,7 @@ class _MapTab extends StatelessWidget {
           width: 36,
           height: 36,
           child: Tooltip(
-            message:
-                '#${r['id']} · ${r['incident_type']} · ${r['status']}',
+            message: '#${r['id']} · ${r['incident_type']} · ${r['status']}',
             child: Container(
               decoration: BoxDecoration(
                 color: color,
@@ -477,10 +471,9 @@ class _MapTab extends StatelessWidget {
         ));
       }
       // Resolution marker
-      final rLat = double.tryParse(
-          r['resolved_at_latitude']?.toString() ?? '');
-      final rLng = double.tryParse(
-          r['resolved_at_longitude']?.toString() ?? '');
+      final rLat = double.tryParse(r['resolved_at_latitude']?.toString() ?? '');
+      final rLng =
+          double.tryParse(r['resolved_at_longitude']?.toString() ?? '');
       if (rLat != null && rLng != null) {
         reportMarkers.add(Marker(
           point: LatLng(rLat, rLng),
@@ -547,8 +540,7 @@ class _MapTab extends StatelessWidget {
           options: MapOptions(initialCenter: center, initialZoom: zoom),
           children: [
             TileLayer(
-              urlTemplate:
-                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.blockiqx.app',
             ),
             MarkerLayer(markers: allMarkers),
@@ -563,23 +555,21 @@ class _MapTab extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
-                BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 8)
+                BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 8)
               ],
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Legend',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 12)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 SizedBox(height: 6),
                 _LegendRow(color: Colors.orange, label: 'Pending'),
                 _LegendRow(color: Colors.blue, label: 'In Progress'),
                 _LegendRow(color: Colors.purple, label: 'Arrived'),
                 _LegendRow(color: Colors.green, label: 'Completed'),
-                _LegendRow(
-                    color: Colors.deepPurple, label: 'Staff Location'),
+                _LegendRow(color: Colors.deepPurple, label: 'Staff Location'),
               ],
             ),
           ),
@@ -633,7 +623,9 @@ class _LegendRow extends StatelessWidget {
 class _ListTab extends StatelessWidget {
   final List<dynamic> reports;
   final List<dynamic> staff;
-  const _ListTab({required this.reports, required this.staff});
+  final VoidCallback onDataReload;
+  const _ListTab(
+      {required this.reports, required this.staff, required this.onDataReload});
 
   @override
   Widget build(BuildContext context) {
@@ -661,7 +653,11 @@ class _ListTab extends StatelessWidget {
             ),
           )
         else
-          ...reports.map((r) => _ReportListTile(r: r)),
+          ...reports.map((r) => _ReportListTile(
+                r: r,
+                staffList: staff,
+                onUpdate: onDataReload,
+              )),
       ],
     );
   }
@@ -684,9 +680,7 @@ class _SectionHeader extends StatelessWidget {
           const SizedBox(width: 8),
           Text(title,
               style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: color)),
+                  fontWeight: FontWeight.w700, fontSize: 14, color: color)),
         ],
       ),
     );
@@ -702,8 +696,7 @@ class _StaffTile extends StatelessWidget {
     final hasLocation = s['latitude'] != null && s['longitude'] != null;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         leading: Container(
           padding: const EdgeInsets.all(8),
@@ -726,7 +719,10 @@ class _StaffTile extends StatelessWidget {
 
 class _ReportListTile extends StatelessWidget {
   final dynamic r;
-  const _ReportListTile({required this.r});
+  final List<dynamic> staffList;
+  final VoidCallback onUpdate;
+  const _ReportListTile(
+      {required this.r, required this.staffList, required this.onUpdate});
 
   Color _statusColor(String s) {
     switch (s.toLowerCase()) {
@@ -744,100 +740,113 @@ class _ReportListTile extends StatelessWidget {
     }
   }
 
+  void _showReportDetails(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _ReportDetailSheet(
+        report: r,
+        staffList: staffList,
+        onUpdate: onUpdate,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final status = r['status']?.toString() ?? 'Unknown';
     final color = _statusColor(status);
-    final hasCoords =
-        r['latitude'] != null && r['longitude'] != null;
+    final hasCoords = r['latitude'] != null && r['longitude'] != null;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withAlpha(25),
-                borderRadius: BorderRadius.circular(8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: InkWell(
+        onTap: () => _showReportDetails(context),
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withAlpha(25),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.report_problem, color: color, size: 20),
               ),
-              child: Icon(Icons.report_problem, color: color, size: 20),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text('#${r['id']}',
-                          style: TextStyle(
-                              color: Colors.grey[500], fontSize: 11)),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: color.withAlpha(30),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(status,
-                            style: TextStyle(
-                                color: color,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    r['incident_type']?.toString() ?? 'Unknown',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    r['location']?.toString() ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.grey[600], fontSize: 12),
-                  ),
-                  if (hasCoords) ...[
-                    const SizedBox(height: 4),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Row(
                       children: [
-                        Icon(Icons.location_on,
-                            size: 12, color: Colors.grey[400]),
-                        const SizedBox(width: 3),
-                        Text(
-                          '${double.parse(r['latitude'].toString()).toStringAsFixed(4)}, '
-                          '${double.parse(r['longitude'].toString()).toStringAsFixed(4)}',
-                          style: TextStyle(
-                              fontSize: 11, color: Colors.grey[400]),
-                        ),
-                        if (r['resolved_at_latitude'] != null) ...[
-                          const SizedBox(width: 8),
-                          Icon(Icons.check_circle,
-                              size: 12, color: Colors.green[400]),
-                          const SizedBox(width: 3),
-                          Text('Resolved',
+                        Text('#${r['id']}',
+                            style: TextStyle(
+                                color: Colors.grey[500], fontSize: 11)),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: color.withAlpha(30),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(status,
                               style: TextStyle(
+                                  color: color,
                                   fontSize: 11,
-                                  color: Colors.green[400])),
-                        ],
+                                  fontWeight: FontWeight.w600)),
+                        ),
                       ],
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      r['incident_type']?.toString() ?? 'Unknown',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      r['location']?.toString() ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                    if (hasCoords) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on,
+                              size: 12, color: Colors.grey[400]),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${double.parse(r['latitude'].toString()).toStringAsFixed(4)}, '
+                            '${double.parse(r['longitude'].toString()).toStringAsFixed(4)}',
+                            style: TextStyle(
+                                fontSize: 11, color: Colors.grey[400]),
+                          ),
+                          if (r['resolved_at_latitude'] != null) ...[
+                            const SizedBox(width: 8),
+                            Icon(Icons.check_circle,
+                                size: 12, color: Colors.green[400]),
+                            const SizedBox(width: 3),
+                            Text('Resolved',
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.green[400])),
+                          ],
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -876,6 +885,323 @@ class _ErrorView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ─── Report Detail Sheet ────────────────────────────────────────────────────
+
+class _ReportDetailSheet extends StatefulWidget {
+  final dynamic report;
+  final List<dynamic> staffList;
+  final VoidCallback onUpdate;
+
+  const _ReportDetailSheet({
+    required this.report,
+    required this.staffList,
+    required this.onUpdate,
+  });
+
+  @override
+  State<_ReportDetailSheet> createState() => _ReportDetailSheetState();
+}
+
+class _ReportDetailSheetState extends State<_ReportDetailSheet> {
+  int? _selectedStaffId;
+  String? _selectedStatus;
+  final _noteController = TextEditingController();
+  bool _isSaving = false;
+
+  final List<String> _statusOptions = [
+    'Pending',
+    'In Progress',
+    'Arrived at location',
+    'Work started',
+    'Completed',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedStaffId = widget.report['assigned_to'];
+    _selectedStatus = widget.report['status'];
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  bool get _hasChanges {
+    return _selectedStaffId != widget.report['assigned_to'] ||
+        _selectedStatus != widget.report['status'] ||
+        _noteController.text.trim().isNotEmpty;
+  }
+
+  void _openStaffSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return ListView(
+          children: widget.staffList.map((s) {
+            return ListTile(
+              leading: const Icon(Icons.person),
+              title: Text(s['name'] ?? 'Unnamed'),
+              subtitle: Text(s['email'] ?? ''),
+              onTap: () {
+                setState(() {
+                  _selectedStaffId = s['id'];
+                });
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Future<void> _handleUpdateReport() async {
+    if (!_hasChanges) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      final token = context.read<AuthProvider>().token!;
+      final reportId = widget.report['id'] as int;
+
+      await ApiService.updateReport(
+        token,
+        reportId,
+        staffId: _selectedStaffId,
+        status: _selectedStatus,
+        note: _noteController.text.trim(),
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(const SnackBar(
+            content: Text('Report updated successfully!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ));
+        Navigator.pop(context);
+      }
+      widget.onUpdate();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text('Error updating report: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final assignedStaffName = widget.staffList
+        .firstWhere(
+          (s) => s['id'] == widget.report['assigned_to'],
+          orElse: () => {'name': 'Unassigned'},
+        )['name']
+        .toString();
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.8,
+      maxChildSize: 0.95,
+      builder: (_, controller) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  controller: controller,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    Text(
+                      'Report #${widget.report['id']}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    _DetailRow(
+                      title: 'Incident',
+                      value: widget.report['incident_type'] ?? 'N/A',
+                    ),
+                    _DetailRow(
+                        title: 'Location',
+                        value: widget.report['location'] ?? 'N/A'),
+                    _DetailRow(title: 'Assigned To', value: assignedStaffName),
+                    const SizedBox(height: 16),
+                    const Text('Description',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text(widget.report['description'] ?? 'No description.',
+                        style: TextStyle(color: Colors.grey[700])),
+                    const SizedBox(height: 24),
+
+                    // Status, Assignment, and Notes
+                    const Text('Update Report',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    const SizedBox(height: 12),
+
+                    const Text('Status',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    DropdownButtonFormField<String>(
+                      value: _selectedStatus,
+                      items: _statusOptions
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .toList(),
+                      onChanged: (val) => setState(() => _selectedStatus = val),
+                      decoration:
+                          const InputDecoration(border: OutlineInputBorder()),
+                    ),
+                    const SizedBox(height: 16),
+
+                    const Text('Assign to Staff',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    GestureDetector(
+                      onTap: () => _openStaffSelector(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 14),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _selectedStaffId == null
+                                    ? 'Select staff member'
+                                    : widget.staffList.firstWhere((s) =>
+                                        s['id'] == _selectedStaffId)['name'],
+                              ),
+                            ),
+                            const Icon(Icons.arrow_drop_down),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    const Text('Add Note/Comment',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    TextField(
+                      controller: _noteController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter any notes or comments here...',
+                      ),
+                      onChanged: (_) =>
+                          setState(() {}), // To re-evaluate _hasChanges
+                    ),
+
+                    const SizedBox(height: 24),
+                    const Text('Existing Notes',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    _buildNotesList(widget.report['notes']),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: _isSaving
+                    ? const Center(child: CircularProgressIndicator())
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _hasChanges ? _handleUpdateReport : null,
+                          icon: const Icon(Icons.save_alt_outlined),
+                          label: const Text('Save Changes'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF6A1B9A),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNotesList(List<dynamic>? notes) {
+    if (notes == null || notes.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Text('No notes yet.', style: TextStyle(color: Colors.grey)),
+      );
+    }
+    return Column(
+      children: notes.map((note) {
+        final author = note['user']?['name'] ?? 'Unknown User';
+        final timestamp = note['created_at'] != null
+            ? DateFormat.yMd()
+                .add_jm()
+                .format(DateTime.parse(note['created_at']))
+            : '';
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: ListTile(
+            title: Text(note['note']?.toString() ?? ''),
+            subtitle: Text('By $author on $timestamp'),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String title;
+  final String value;
+  const _DetailRow({required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(color: Colors.grey[600])),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
