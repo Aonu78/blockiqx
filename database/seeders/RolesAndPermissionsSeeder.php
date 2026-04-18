@@ -12,34 +12,82 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-        // Reset cached roles and permissions
+        // ✅ Always clear cache FIRST
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // create permissions for web guard
-        Permission::findOrCreate('manage reports', 'web');
-        Permission::findOrCreate('assign reports', 'web');
-        Permission::findOrCreate('update status', 'web');
-        Permission::findOrCreate('view analytics', 'web');
-        Permission::findOrCreate('manage users', 'web');
-        Permission::findOrCreate('manage staff', 'web');
+        // -----------------------------
+        // WEB PERMISSIONS
+        // -----------------------------
+        $webPermissions = [
+            'manage reports',
+            'assign reports',
+            'update status',
+            'view analytics',
+            'manage users',
+            'manage staff',
+        ];
 
-        // create permissions for staff guard
-        Permission::findOrCreate('update status', 'staff');
+        foreach ($webPermissions as $perm) {
+            Permission::firstOrCreate([
+                'name' => $perm,
+                'guard_name' => 'web',
+            ]);
+        }
 
-        // create roles and assign created permissions
+        // -----------------------------
+        // STAFF PERMISSIONS
+        // -----------------------------
+        $staffPermissions = [
+            'update status',
+        ];
 
-        // Staff role for staff guard
-        $role = Role::findOrCreate('staff', 'staff');
-        $role->givePermissionTo(['update status']);
+        foreach ($staffPermissions as $perm) {
+            Permission::firstOrCreate([
+                'name' => $perm,
+                'guard_name' => 'staff',
+            ]);
+        }
 
-        // Admin roles for web guard
-        $role = Role::findOrCreate('admin', 'web')
-            ->givePermissionTo(['manage reports', 'assign reports', 'view analytics', 'manage users', 'manage staff']);
+        // -----------------------------
+        // ROLES
+        // -----------------------------
 
-        $role = Role::findOrCreate('super-admin', 'web');
-        $role->givePermissionTo(Permission::where('guard_name', 'web')->get());
+        // Staff role
+        $staffRole = Role::firstOrCreate([
+            'name' => 'staff',
+            'guard_name' => 'staff',
+        ]);
 
-        // Create a super-admin user
+        $staffRole->syncPermissions($staffPermissions);
+
+        // Admin role
+        $adminRole = Role::firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => 'web',
+        ]);
+
+        $adminRole->syncPermissions([
+            'manage reports',
+            'assign reports',
+            'view analytics',
+            'manage users',
+            'manage staff',
+        ]);
+
+        // Super Admin
+        $superAdmin = Role::firstOrCreate([
+            'name' => 'super-admin',
+            'guard_name' => 'web',
+        ]);
+
+        $superAdmin->syncPermissions(
+            Permission::where('guard_name', 'web')->get()
+        );
+
+        // -----------------------------
+        // USERS
+        // -----------------------------
+
         $admin = User::firstOrCreate(
             ['email' => 'admin@blockiqx.com'],
             [
@@ -49,7 +97,6 @@ class RolesAndPermissionsSeeder extends Seeder
         );
         $admin->assignRole('super-admin');
 
-        // Create a sample staff user
         $staffUser = Staff::firstOrCreate(
             ['email' => 'staff@blockiqx.com'],
             [
@@ -58,5 +105,8 @@ class RolesAndPermissionsSeeder extends Seeder
             ]
         );
         $staffUser->assignRole('staff');
+
+        // ✅ Clear cache AGAIN (important)
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Staff;
 
-class StaffController extends Controller
+class StaffControllerApi extends Controller
 {
     public function reportsIndex()
     {
