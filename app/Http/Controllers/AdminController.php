@@ -116,10 +116,7 @@ class AdminController extends Controller
         }
 
         // Select and fetch reports with coordinates and relevant details
-        $reports = $query->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')
-            ->get();
+        $reports = $query->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')->get();
 
         return response()->json($reports);
     }
@@ -173,17 +170,11 @@ class AdminController extends Controller
         }
 
         // Select and fetch reports with coordinates and relevant details
-        $reports = $query->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')
+        $reports = $query->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')
             ->get();
 
         // Fetch staff with their coordinates
-        $staff = Staff::whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->with('organization')
-            ->select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')
-            ->get();
+        $staff = Staff::select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')->get();
 
         return response()->json([
             'reports' => $reports,
