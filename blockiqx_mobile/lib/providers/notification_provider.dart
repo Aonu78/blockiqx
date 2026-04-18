@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import '../config/api_config.dart';
 import '../services/api_service.dart';
 
 class NotificationItem {
@@ -56,23 +54,16 @@ class NotificationProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await ApiService._httpClient.get(
-        Uri.parse(ApiConfig.notifications),
-        headers: ApiConfig.headers(token),
-      );
+      final data = await ApiService.getNotifications(token);
+      final List<dynamic> notificationsJson = data['notifications'] ?? [];
+      final newNotifications = notificationsJson
+          .map((json) => NotificationItem.fromJson(json))
+          .toList();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final List<dynamic> notificationsJson = data['notifications'] ?? [];
-        final newNotifications = notificationsJson
-            .map((json) => NotificationItem.fromJson(json))
-            .toList();
-
-        // Update only if there are changes
-        if (!listEquals(_notifications, newNotifications)) {
-          _notifications = newNotifications;
-          notifyListeners();
-        }
+      // Update only if there are changes
+      if (!listEquals(_notifications, newNotifications)) {
+        _notifications = newNotifications;
+        notifyListeners();
       }
     } catch (e) {
       // Handle error silently or log
@@ -84,10 +75,7 @@ class NotificationProvider with ChangeNotifier {
 
   Future<void> markAsRead(String token, String notificationId) async {
     try {
-      await ApiService._httpClient.put(
-        Uri.parse(ApiConfig.markNotificationRead(notificationId)),
-        headers: ApiConfig.jsonHeaders(token),
-      );
+      await ApiService.markNotificationRead(token, notificationId);
 
       // Update local state
       final index = _notifications.indexWhere((n) => n.id == notificationId);
@@ -109,31 +97,5 @@ class NotificationProvider with ChangeNotifier {
   void dispose() {
     stopPolling();
     super.dispose();
-  }
-}
-
-  bool _shouldReceive(Map<String, dynamic> report, List<dynamic>? target) {
-    final user = _authProvider.user;
-    final staff = _authProvider.staff;
-
-    if (_authProvider.isAdmin) {
-      return true;
-    }
-
-    if (_authProvider.isStaff) {
-      if (report['assigned_to'] != null && report['assigned_to'].toString() == staff?.id.toString()) {
-        return true;
-      }
-      return target?.contains('staff') == true;
-    }
-
-    if (_authProvider.isUser) {
-      if (report['user_id'] != null && report['user_id'].toString() == user?.id.toString()) {
-        return true;
-      }
-      return target?.contains('user') == true;
-    }
-
-    return false;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:blockiqx/providers/auth_provider.dart';
 
 import '../providers/notification_provider.dart';
 
@@ -10,6 +11,7 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifications = context.watch<NotificationProvider>().notifications;
     final unreadCount = context.watch<NotificationProvider>().unreadCount;
+    final token = context.read<AuthProvider>().token;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,11 +49,11 @@ class NotificationsScreen extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final item = notifications[index];
-                final data = item['data'] as Map<String, dynamic>? ?? {};
-                final read = item['read_at'] != null;
+                final data = item.data;
+                final read = item.isRead;
                 final title = data['title'] as String? ?? 'Report update';
                 final message = data['message'] as String? ?? '';
-                final createdAt = item['created_at'] as String? ?? '';
+                final createdAt = item.createdAt;
 
                 return ListTile(
                   shape: RoundedRectangleBorder(
@@ -72,8 +74,8 @@ class NotificationsScreen extends StatelessWidget {
                     style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   onTap: () async {
-                    if (!read) {
-                      await context.read<NotificationProvider>().markAsRead(item['id'].toString());
+                    if (!read && token != null) {
+                      await context.read<NotificationProvider>().markAsRead(token, item.id);
                     }
                   },
                 );

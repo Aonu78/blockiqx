@@ -12,7 +12,6 @@ class ApiException implements Exception {
 }
 
 class ApiService {
-  static final http.Client _httpClient = http.Client();
   // ─── AUTH ─────────────────────────────────────────────────────────────────
 
   /// POST /api/register
