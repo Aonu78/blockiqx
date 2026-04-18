@@ -45,7 +45,7 @@ Route::prefix('admin')->middleware('auth:web')->group(function () {
     Route::post('/settings', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
     
     // Actions for web dashboard
-    Route::post('/reports/{report}/assign', [AdminController::class, 'assignReport'])->name('admin.reports.assign');
+    Route::put('/reports/{report}', [AdminController::class, 'updateReport'])->name('admin.reports.update');
     Route::post('/staff/create', [AdminController::class, 'createOutreachMember'])->name('admin.staff.create');
     Route::put('/staff/{staff}/update', [AdminController::class, 'updateStaff'])->name('admin.staff.update');
     Route::put('/users/{user}/update', [AdminController::class, 'updateUser'])->name('admin.users.update');

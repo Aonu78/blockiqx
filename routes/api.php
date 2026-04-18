@@ -27,8 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('/reports', [AdminController::class, 'getAllReports']);
         Route::post('/reports/{report}/assign', [AdminController::class, 'assignReport']);
+        Route::put('/reports/{report}', [AdminController::class, 'updateReport']);
         Route::get('/analytics/reports-overview', [AdminController::class, 'getReportsOverview']);
-        Route::get('/analytics/area-insights', [AdminController::class, 'getAreaInsights']);
+        Route::get('t/analytics/area-insights', [AdminController::class, 'getAreaInsights']);
         Route::get('/analytics/map-view', [AdminController::class, 'getMapView']);
         Route::get('/analytics/outreach-performance', [AdminController::class, 'getOutreachPerformance']);
         Route::get('/users', [AdminController::class, 'getAllUsers']);
