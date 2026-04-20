@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/report.dart';
@@ -171,6 +172,74 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
     }
   }
 
+  String _formatNoteTimestamp(dynamic value) {
+    if (value == null) return '';
+
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return '';
+
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+
+    return DateFormat('dd MMM yyyy, hh:mm a').format(parsed.toLocal());
+  }
+
+  Future<void> _openDrivingDirections() async {
+    if (_report.latitude == null || _report.longitude == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location coordinates are not available.')),
+      );
+      return;
+    }
+
+    final lat = _report.latitude!;
+    final lng = _report.longitude!;
+
+    final googleMapsAppUri = Uri.parse(
+      'google.navigation:q=$lat,$lng&mode=d',
+    );
+    final googleMapsWebUri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving',
+    );
+
+    if (await canLaunchUrl(googleMapsAppUri)) {
+      await launchUrl(googleMapsAppUri);
+      return;
+    }
+
+    if (await canLaunchUrl(googleMapsWebUri)) {
+      await launchUrl(googleMapsWebUri, mode: LaunchMode.externalApplication);
+      return;
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Could not open driving directions.')),
+    );
+  }
+
+  void _openFullScreenMap() {
+    if (_report.latitude == null || _report.longitude == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location coordinates are not available.')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => _FullScreenReportMap(
+          reportId: _report.id,
+          latitude: _report.latitude!,
+          longitude: _report.longitude!,
+          locationLabel: _report.location,
+          onOpenDirections: _openDrivingDirections,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -297,13 +366,32 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
 
                     const SizedBox(height: 10),
 
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        setState(() => _showMap = !_showMap);
-                      },
-                      icon: const Icon(Icons.directions),
-                      label: Text(
-                          _showMap ? "Hide Directions" : "Get Directions"),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            setState(() => _showMap = !_showMap);
+                          },
+                          icon: Icon(
+                            _showMap ? Icons.map_outlined : Icons.directions,
+                          ),
+                          label: Text(
+                            _showMap ? "Hide Map" : "Show Map",
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: _openDrivingDirections,
+                          icon: const Icon(Icons.alt_route),
+                          label: const Text("Driving Route"),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: _openFullScreenMap,
+                          icon: const Icon(Icons.fullscreen),
+                          label: const Text("Fullscreen Map"),
+                        ),
+                      ],
                     ),
                   ]),
 
@@ -345,9 +433,9 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
                           : _report.notes!.map((n) {
                               final author =
                                   (n['user']?['name'] ?? 'System').toString();
-                              final createdAt =
-                                  (n['created_at'] ?? n['timestamp'] ?? '')
-                                      .toString();
+                              final createdAt = _formatNoteTimestamp(
+                                n['created_at'] ?? n['timestamp'],
+                              );
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Column(
@@ -443,6 +531,102 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
                 style: const TextStyle(
                   color: Colors.blue,
                   decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FullScreenReportMap extends StatelessWidget {
+  final int reportId;
+  final double latitude;
+  final double longitude;
+  final String locationLabel;
+  final Future<void> Function() onOpenDirections;
+
+  const _FullScreenReportMap({
+    required this.reportId,
+    required this.latitude,
+    required this.longitude,
+    required this.locationLabel,
+    required this.onOpenDirections,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final position = LatLng(latitude, longitude);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0D1B2A),
+        title: Text(
+          'Report #$reportId Map',
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: position,
+                zoom: 15,
+              ),
+              mapType: MapType.normal,
+              myLocationButtonEnabled: true,
+              zoomControlsEnabled: true,
+              markers: {
+                Marker(
+                  markerId: const MarkerId('incident'),
+                  position: position,
+                  infoWindow: InfoWindow(title: 'Incident Location', snippet: locationLabel),
+                ),
+              },
+            ),
+          ),
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 20,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(14),
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      locationLabel,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${latitude.toStringAsFixed(5)}, ${longitude.toStringAsFixed(5)}',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: onOpenDirections,
+                        icon: const Icon(Icons.alt_route),
+                        label: const Text('Open Driving Directions'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
