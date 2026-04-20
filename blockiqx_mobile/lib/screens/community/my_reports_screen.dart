@@ -1,10 +1,10 @@
-import 'package:blockiqx_mobile/screens/community/edit_report_screen.dart';
+import 'package:blockiqx/screens/community/edit_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:blockiqx_mobile/models/report.dart';
-import 'package:blockiqx_mobile/providers/auth_provider.dart';
-import 'package:blockiqx_mobile/services/api_service.dart';
-import 'package:blockiqx_mobile/widgets/report_card.dart';
+import 'package:blockiqx/models/report.dart';
+import 'package:blockiqx/providers/auth_provider.dart';
+import 'package:blockiqx/services/api_service.dart';
+import 'package:blockiqx/widgets/report_card.dart';
 
 class MyReportsScreen extends StatefulWidget {
   const MyReportsScreen({Key? key}) : super(key: key);

@@ -110,7 +110,7 @@ class AdminController extends Controller
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
-        
+
         if ($request->has('organization_id') && $request->organization_id != 'all') {
             $query->where('organization_id', $request->organization_id);
         }
@@ -164,7 +164,7 @@ class AdminController extends Controller
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
-        
+
         if ($request->has('organization_id') && $request->organization_id != 'all') {
             $query->where('organization_id', $request->organization_id);
         }
@@ -286,7 +286,7 @@ class AdminController extends Controller
         ]);
 
         $staff->assignRole('staff');
-        
+
         // Optionally delete or deactivate the user record
         // $user->delete();
 
@@ -343,5 +343,38 @@ class AdminController extends Controller
         ]);
 
         return redirect()->route('admin.staff')->with('success', 'Staff password reset successfully.');
+    }
+
+    public function updateReport(Request $request, Report $report)
+    {
+        $validatedData = $request->validate([
+            'status' => 'nullable|string',
+            'incident_type' => 'nullable|string',
+            'category' => 'nullable|string',
+            'concern_level' => 'nullable|string',
+            'description' => 'nullable|string',
+            'location' => 'nullable|string',
+            'organization_id' => 'nullable|exists:organizations,id',
+            'assigned_to' => 'nullable|exists:staff,id',
+        ]);
+
+        $report->update($validatedData);
+
+        return response()->json([
+            'message' => 'Report updated successfully',
+            'report' => $report->load(['organization', 'assignedStaff'])
+        ]);
+    }
+
+    public function getAllUsers()
+    {
+        $users = User::latest()->get();
+        return response()->json($users);
+    }
+
+    public function getAllStaff()
+    {
+        $staff = Staff::with('organization')->get();
+        return response()->json($staff);
     }
 }

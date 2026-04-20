@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:blockiqx_mobile/models/report.dart';
-import 'package:blockiqx_mobile/providers/auth_provider.dart';
-import 'package:blockiqx_mobile/services/api_service.dart';
+import 'package:blockiqx/models/report.dart';
+import 'package:blockiqx/providers/auth_provider.dart';
+import 'package:blockiqx/services/api_service.dart';
 
 class EditReportScreen extends StatefulWidget {
   final Report report;
