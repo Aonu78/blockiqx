@@ -73,9 +73,9 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Pending Reports</p>
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Unassigned Reports</p>
                                 <h5 class="font-weight-bolder mb-0">
-                                    {{ \App\Models\Report::where('status', 'Pending')->count() }}
+                                    {{ \App\Models\Report::whereNull('assigned_to')->count() }}
                                 </h5>
                             </div>
                         </div>

@@ -22,7 +22,10 @@ class AdminController extends Controller
     // Methods for displaying admin views
     public function reportsIndex()
     {
-        $reports = Report::with(['organization', 'assignedStaff'])->latest()->get();
+        $reports = Report::with(['organization', 'assignedStaff'])
+            ->orderByRaw('assigned_to IS NULL DESC')
+            ->latest()
+            ->get();
         $staffMembers = Staff::with('organization')->orderBy('name')->get();
 
         return view('admin.reports', compact('reports', 'staffMembers'));
@@ -323,7 +326,21 @@ class AdminController extends Controller
                 )
             );
         } catch (Throwable $exception) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Report assigned, but the staff notification could not be sent.',
+                    'report' => $report->fresh(['organization', 'assignedStaff']),
+                ], 200);
+            }
+
             return redirect()->back()->with('warning', 'Report assigned, but the staff notification could not be sent.');
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Report assigned to ' . $staff->name . ' successfully.',
+                'report' => $report->fresh(['organization', 'assignedStaff']),
+            ]);
         }
 
         return redirect()->back()->with('success', 'Report assigned to ' . $staff->name . ' successfully.');
@@ -381,6 +398,12 @@ class AdminController extends Controller
         }
 
         $report->update($validatedData);
+
+        if (!$request->wantsJson()) {
+            return redirect()
+                ->route('admin.reports.show', $report)
+                ->with('success', 'Report updated successfully');
+        }
 
         return response()->json([
             'message' => 'Report updated successfully',

@@ -31,7 +31,7 @@ class StaffControllerApi extends Controller
 
     public function getAssignedReports()
     {
-        $staff = auth()->user();
+        $staff = request()->user();
 
         if (!$staff) {
             return response()->json(['message' => 'Unauthenticated'], 401);
@@ -55,8 +55,12 @@ class StaffControllerApi extends Controller
     public function updateReportStatus(Request $request, Report $report)
     {
         $validatedData = $request->validate([
-            'status' => 'required|string|in:In Progress,Completed,Arrived at location,Work started',
+            'status' => 'required|string|in:Pending,In Progress,Completed,Arrived at location,Work started',
         ]);
+
+        $staff = $request->user();
+
+        abort_unless($staff && $report->assigned_to === $staff->id, 403, 'This report is not assigned to you.');
 
         $report->update($validatedData);
 
@@ -84,9 +88,18 @@ class StaffControllerApi extends Controller
             'notes' => 'required|string',
         ]);
 
-        $notes = $report->notes ?? []; // Get existing notes or initialize empty array
-        $notes[] = ['user_id' => Auth::user()->id(), 'note' => $validatedData['notes'], 'timestamp' => now()]; // Add new note with staff ID and timestamp
-        
+        $staff = $request->user();
+
+        abort_unless($staff && $report->assigned_to === $staff->id, 403, 'This report is not assigned to you.');
+
+        $notes = $report->notes ?? [];
+        $notes[] = [
+            'user_id' => $staff->id,
+            'user' => ['name' => $staff->name],
+            'note' => $validatedData['notes'],
+            'created_at' => now()->toIso8601String(),
+        ];
+
         $report->update(['notes' => $notes]);
 
         return response()->json(['message' => 'Note added successfully', 'report' => $report]);
@@ -95,16 +108,20 @@ class StaffControllerApi extends Controller
     public function uploadMedia(Request $request, Report $report)
     {
         $validatedData = $request->validate([
-            'media.*' => 'required|file|mimes:jpg,jpeg,png,mp4,mov|max:20480', // Max 20MB per file
+            'media.*' => 'required|file|mimes:jpg,jpeg,png,mp4,mov|max:20480',
         ]);
 
-        $mediaPaths = $report->media_paths ?? []; // Get existing paths or initialize empty array
+        $staff = $request->user();
+
+        abort_unless($staff && $report->assigned_to === $staff->id, 403, 'This report is not assigned to you.');
+
+        $mediaPaths = $report->media_paths ?? [];
 
         foreach ($request->file('media', []) as $file) {
             $path = $file->store('reports/media', 'public');
             $mediaPaths[] = $path;
         }
-        
+
         $report->update(['media_paths' => $mediaPaths]);
 
         return response()->json(['message' => 'Media uploaded successfully', 'report' => $report]);

@@ -23,6 +23,7 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
   String? _loadError;
 
   bool _updatingStatus = false;
+  bool _addingNote = false;
   String? _updateError;
   String? _updateSuccess;
 
@@ -31,6 +32,7 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
   final TextEditingController _noteController = TextEditingController();
 
   final List<String> _statusOptions = [
+    'Pending',
     'In Progress',
     'Arrived at location',
     'Work started',
@@ -60,9 +62,11 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
         _report = Report.fromJson(data);
       });
     } catch (e) {
-      setState(() => _loadError = e.toString());
+      setState(() => _loadError = _friendlyError(e));
     } finally {
-      setState(() => _loadingDetail = false);
+      if (mounted) {
+        setState(() => _loadingDetail = false);
+      }
     }
   }
 
@@ -90,14 +94,22 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
         _updateSuccess = 'Updated to "$newStatus"';
       });
     } catch (e) {
-      setState(() => _updateError = e.toString());
+      setState(() => _updateError = _friendlyError(e));
     } finally {
-      setState(() => _updatingStatus = false);
+      if (mounted) {
+        setState(() => _updatingStatus = false);
+      }
     }
   }
 
   Future<void> _addNote() async {
-    if (_noteController.text.isEmpty) return;
+    if (_noteController.text.trim().isEmpty || _addingNote) return;
+
+    setState(() {
+      _addingNote = true;
+      _updateError = null;
+      _updateSuccess = null;
+    });
 
     final token = context.read<AuthProvider>().token ?? '';
 
@@ -105,20 +117,44 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
       await ApiService.addReportNote(
         token: token,
         reportId: _report.id,
-        note: _noteController.text,
+        note: _noteController.text.trim(),
       );
 
       _noteController.clear();
-      _fetchDetail();
+      await _fetchDetail();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Note added')),
-      );
+      if (!mounted) return;
+      setState(() => _updateSuccess = 'Note added successfully');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('Note added')),
+        );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      final message = _friendlyError(e);
+      if (!mounted) return;
+      setState(() => _updateError = message);
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+    } finally {
+      if (mounted) {
+        setState(() => _addingNote = false);
+      }
     }
+  }
+
+  String _friendlyError(Object error) {
+    final raw = error.toString();
+    if (raw.toLowerCase().contains('404')) {
+      return 'Server route was not found. Please verify the mobile API deployment.';
+    }
+    if (raw.toLowerCase().contains('session expired')) {
+      return 'Your session expired. Please sign in again.';
+    }
+    return raw;
   }
 
   Future<void> _launchPhone(String phoneNumber) async {
@@ -151,7 +187,9 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
+        onPressed: _updatingStatus
+            ? null
+            : () async {
           final selected = await showModalBottomSheet<String>(
             context: context,
             builder: (_) => Column(
@@ -167,8 +205,14 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
 
           if (selected != null) _updateStatus(selected);
         },
-        label: const Text("Update Status"),
-        icon: const Icon(Icons.edit),
+        label: Text(_updatingStatus ? "Updating..." : "Update Status"),
+        icon: _updatingStatus
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.edit),
       ),
       body: _loadingDetail
           ? const Center(child: CircularProgressIndicator())
@@ -176,6 +220,63 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  if (_updateError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Material(
+                        color: const Color(0xFFFFEBEE),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.error_outline,
+                                  color: Colors.redAccent),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(_updateError!)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (_updateSuccess != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Material(
+                        color: const Color(0xFFE8F5E9),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.check_circle_outline,
+                                  color: Colors.green),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(_updateSuccess!)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (_loadError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Material(
+                        color: const Color(0xFFFFF8E1),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.info_outline,
+                                  color: Colors.orange),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(_loadError!)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
 
                   /// INCIDENT
                   _card("Incident", [
@@ -232,21 +333,61 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
 
                   /// NOTES
                   if (_report.notes != null)
-                    _card("Notes", _report.notes!
-                        .map((n) => Text(n['note']))
-                        .toList()),
+                    _card(
+                      "Notes",
+                      _report.notes!.isEmpty
+                          ? const [
+                              Text(
+                                'No notes yet.',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            ]
+                          : _report.notes!.map((n) {
+                              final author =
+                                  (n['user']?['name'] ?? 'System').toString();
+                              final createdAt =
+                                  (n['created_at'] ?? n['timestamp'] ?? '')
+                                      .toString();
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (n['note'] ?? '').toString(),
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      createdAt.isEmpty
+                                          ? author
+                                          : '$author • $createdAt',
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                    ),
 
                   /// ADD NOTE
                   _card("Add Note", [
                     TextField(
                       controller: _noteController,
+                      onChanged: (_) => setState(() {}),
                       decoration:
                           const InputDecoration(hintText: "Write note..."),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                        onPressed: _addNote,
-                        child: const Text("Submit"))
+                        onPressed:
+                            _addingNote || _noteController.text.trim().isEmpty
+                                ? null
+                                : _addNote,
+                        child: Text(_addingNote ? "Saving..." : "Submit"))
                   ]),
                 ],
               ),

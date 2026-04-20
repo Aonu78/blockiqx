@@ -121,13 +121,13 @@
 
                             <h6 class="text-uppercase text-xs text-secondary">Activity & Notes</h6>
                             <div class="border rounded p-3 bg-light" style="max-height: 400px; overflow-y: auto;">
-                                @forelse ($report->notes->sortByDesc('created_at') as $note)
+                                @forelse (collect($report->notes ?? [])->sortByDesc(fn ($note) => data_get($note, 'created_at', data_get($note, 'timestamp'))) as $note)
                                     <div class="mb-3 border-bottom pb-2">
-                                        <p class="text-sm mb-1">{{ $note->note }}</p>
+                                        <p class="text-sm mb-1">{{ data_get($note, 'note') }}</p>
                                         <p class="text-xs text-secondary mb-0">
-                                            <strong>{{ $note->user->name ?? 'System' }}</strong>
+                                            <strong>{{ data_get($note, 'user.name', 'System') }}</strong>
                                             &nbsp;&middot;&nbsp;
-                                            {{ $note->created_at->format('d M Y, h:i A') }}
+                                            {{ data_get($note, 'created_at') ? \Illuminate\Support\Carbon::parse(data_get($note, 'created_at'))->format('d M Y, h:i A') : 'N/A' }}
                                         </p>
                                     </div>
                                 @empty

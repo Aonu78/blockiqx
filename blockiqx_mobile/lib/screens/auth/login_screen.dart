@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../community/home_screen.dart';
 import '../community/submit_report_screen.dart';
+import 'signup_screen.dart';
 import 'shared_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -257,29 +258,52 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                 ),
                                 const SizedBox(height: 20),
+                                RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    text: "Don't have an account? ",
+                                    style: const TextStyle(
+                                      color: Color.fromRGBO(255, 255, 255, 0.4),
+                                      fontSize: 13,
+                                    ),
+                                    children: [
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: GestureDetector(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const SignupScreen(),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            'Sign up',
+                                            style: TextStyle(
+                                              color: Color(0xFF42A5F5),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: () => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => const SubmitReportScreen(
-                                            isGuest: true)),
+                                      builder: (_) =>
+                                          const SubmitReportScreen(isGuest: true),
+                                    ),
                                   ),
-                                  child: RichText(
-                                    text: const TextSpan(
-                                      text: "Don't have an account? ",
-                                      style: TextStyle(
-                                          color:
-                                             Color.fromRGBO(255, 255, 255, 0.4),
-                                          fontSize: 13),
-                                      children: [
-                                        TextSpan(
-                                          text: 'Submit as Guest',
-                                          style: TextStyle(
-                                            color: Color(0xFF42A5F5),
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
+                                  child: const Text(
+                                    'Continue as guest',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(255, 255, 255, 0.55),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),

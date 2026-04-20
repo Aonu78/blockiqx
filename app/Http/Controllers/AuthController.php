@@ -32,7 +32,7 @@ class AuthController extends Controller
         }
 
         if (Auth::guard('web')->attempt($request->only('email', 'password'))) {
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         throw ValidationException::withMessages([

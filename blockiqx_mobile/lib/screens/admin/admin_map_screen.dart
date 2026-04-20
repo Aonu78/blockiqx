@@ -81,7 +81,12 @@ class _AdminMapScreenState extends State<AdminMapScreen>
         dateTo: _filterDateTo,
       );
       setState(() {
-        _reports = data['reports'] ?? [];
+        _reports = List<dynamic>.from(data['reports'] ?? [])
+          ..sort((a, b) {
+            final aAssigned = a['assigned_to'] != null ? 1 : 0;
+            final bAssigned = b['assigned_to'] != null ? 1 : 0;
+            return aAssigned.compareTo(bAssigned);
+          });
         _staff = data['staff'] ?? [];
         _loading = false;
       });
@@ -759,6 +764,12 @@ class _ReportListTile extends StatelessWidget {
     final status = r['status']?.toString() ?? 'Unknown';
     final color = _statusColor(status);
     final hasCoords = r['latitude'] != null && r['longitude'] != null;
+    final assignedStaff = staffList.cast<Map<String, dynamic>?>().firstWhere(
+          (s) => s?['id'] == r['assigned_to'],
+          orElse: () => null,
+        );
+    final assignedLabel = assignedStaff?['name']?.toString() ?? 'Unassigned';
+    final isUnassigned = r['assigned_to'] == null;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -817,6 +828,33 @@ class _ReportListTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          isUnassigned ? Icons.person_add_alt_1 : Icons.person,
+                          size: 12,
+                          color: isUnassigned ? Colors.orange : Colors.grey[500],
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            assignedLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isUnassigned
+                                  ? Colors.orange[800]
+                                  : Colors.grey[500],
+                              fontWeight: isUnassigned
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     if (hasCoords) ...[
                       const SizedBox(height: 4),

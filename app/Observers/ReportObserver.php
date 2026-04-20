@@ -9,6 +9,7 @@ use App\Events\ReportStatusUpdated;
 use App\Notifications\ReportActivityNotification;
 use App\Notifications\ReportAssigned;
 use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 class ReportObserver
 {
@@ -106,7 +107,11 @@ class ReportObserver
             );
         }
 
-        broadcast(new ReportStatusUpdated($report))->toOthers();
+        try {
+            broadcast(new ReportStatusUpdated($report))->toOthers();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**
