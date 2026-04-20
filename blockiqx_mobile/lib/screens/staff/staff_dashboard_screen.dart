@@ -42,12 +42,6 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen>
         vsync: this, duration: const Duration(milliseconds: 600));
 
     _loadReports();
-
-    // Start notification polling
-    final token = context.read<AuthProvider>().token ?? '';
-    if (token.isNotEmpty) {
-      context.read<NotificationProvider>().startPolling(token);
-    }
   }
 
   @override

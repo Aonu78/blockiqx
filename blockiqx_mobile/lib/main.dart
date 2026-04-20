@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/notification_provider.dart';
+import 'services/notification_service.dart';
 import 'screens/splash_screen.dart';
 
 void main() async {
@@ -9,15 +10,20 @@ void main() async {
 
   final authProvider = AuthProvider();
   await authProvider.loadFromStorage();
-
-  final notificationsProvider = NotificationProvider();
-  // await notificationsProvider.initialize(); // Remove this as we're using polling
+  await NotificationService.instance.initialize();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: authProvider),
-        ChangeNotifierProvider.value(value: notificationsProvider),
+        ChangeNotifierProxyProvider<AuthProvider, NotificationProvider>(
+          create: (_) => NotificationProvider(),
+          update: (_, auth, notifications) {
+            final provider = notifications ?? NotificationProvider();
+            provider.syncAuth(auth.token);
+            return provider;
+          },
+        ),
       ],
       child: BLOCKIQxApp(authProvider: authProvider),
     ),

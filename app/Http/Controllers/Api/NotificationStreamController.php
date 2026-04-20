@@ -22,14 +22,17 @@ class NotificationStreamController extends Controller
             return response('Unauthorized', 401);
         }
 
-        return response()->stream(function () use ($user) {
-            $lastNotificationId = $request->query('last_id', 0);
+        return response()->stream(function () use ($user, $request) {
+            $lastCreatedAt = $request->query('last_created_at');
 
             while (true) {
-                $notifications = $user->notifications()
-                    ->where('id', '>', $lastNotificationId)
-                    ->latest()
-                    ->get();
+                $query = $user->notifications()->orderBy('created_at');
+
+                if ($lastCreatedAt) {
+                    $query->where('created_at', '>', $lastCreatedAt);
+                }
+
+                $notifications = $query->get();
 
                 if ($notifications->isNotEmpty()) {
                     foreach ($notifications as $notification) {
@@ -37,16 +40,26 @@ class NotificationStreamController extends Controller
                             'id' => $notification->id,
                             'type' => 'notification',
                             'data' => $notification->data,
-                            'created_at' => $notification->created_at->toDateTimeString(),
+                            'read_at' => $notification->read_at?->toDateTimeString(),
+                            'created_at' => $notification->created_at->toIso8601String(),
                         ]) . "\n\n";
 
-                        $lastNotificationId = $notification->id;
-                        ob_flush();
+                        $lastCreatedAt = $notification->created_at->toIso8601String();
+
+                        if (ob_get_level() > 0) {
+                            ob_flush();
+                        }
                         flush();
                     }
                 }
 
-                sleep(2); // Poll every 2 seconds
+                echo ": heartbeat\n\n";
+                if (ob_get_level() > 0) {
+                    ob_flush();
+                }
+                flush();
+
+                sleep(2);
             }
         }, 200, [
             'Content-Type' => 'text/event-stream',
