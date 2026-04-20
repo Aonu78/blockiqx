@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
@@ -101,7 +102,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
 
   Future<void> _pickMedia() async {
     final picker = ImagePicker();
-    final source = await showModalBottomSheet<ImageSource>(
+    final action = await showModalBottomSheet<String>(
       context: context,
       builder: (_) => SafeArea(
         child: Column(
@@ -109,25 +110,85 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Gallery'),
-              onTap: () => Navigator.pop(context, ImageSource.gallery),
+              title: const Text('Photos from Gallery'),
+              onTap: () => Navigator.pop(context, 'gallery_images'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.video_library_outlined),
+              title: const Text('Video from Gallery'),
+              onTap: () => Navigator.pop(context, 'gallery_video'),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Camera'),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
+              title: const Text('Take Photo'),
+              onTap: () => Navigator.pop(context, 'camera_image'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam_outlined),
+              title: const Text('Record Video'),
+              onTap: () => Navigator.pop(context, 'camera_video'),
             ),
           ],
         ),
       ),
     );
-    if (source == null) return;
 
-    final files = await picker.pickMultiImage();
-    for (final f in files) {
-      if (_mediaFiles.length < 5) _mediaFiles.add(File(f.path));
+    if (action == null) return;
+
+    try {
+      final pickedFiles = <XFile>[];
+
+      switch (action) {
+        case 'gallery_images':
+          final result = await FilePicker.platform.pickFiles(
+            allowMultiple: true,
+            type: FileType.custom,
+            allowedExtensions: ['jpg', 'jpeg', 'png', 'heic', 'heif', 'webp'],
+          );
+          if (result != null) {
+            for (final file in result.files) {
+              if (file.path != null) {
+                pickedFiles.add(XFile(file.path!));
+              }
+            }
+          }
+          break;
+        case 'gallery_video':
+          final result = await FilePicker.platform.pickFiles(
+            allowMultiple: false,
+            type: FileType.video,
+          );
+          final path = result?.files.single.path;
+          if (path != null) pickedFiles.add(XFile(path));
+          break;
+        case 'camera_image':
+          final file = await picker.pickImage(source: ImageSource.camera);
+          if (file != null) pickedFiles.add(file);
+          break;
+        case 'camera_video':
+          final file = await picker.pickVideo(source: ImageSource.camera);
+          if (file != null) pickedFiles.add(file);
+          break;
+      }
+
+      for (final f in pickedFiles) {
+        if (_mediaFiles.length >= 5) {
+          _showSnack('You can upload up to 5 files only.');
+          break;
+        }
+
+        final file = File(f.path);
+        if (await file.exists()) {
+          _mediaFiles.add(file);
+        }
+      }
+    } catch (e) {
+      _showSnack('Could not open selected media: $e');
     }
-    setState(() {});
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _submit() async {
@@ -143,7 +204,9 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
     try {
       final result = await ApiService.submitReport(
         token: auth.token,
-        email: widget.isGuest ? _emailCtrl.text.trim() : null,
+        email: widget.isGuest
+            ? _emailCtrl.text.trim()
+            : auth.user?.email,
         phoneNumber: widget.isGuest ? _phoneCtrl.text.trim() : null,
         incidentType: _selectedType!,
         description: _descCtrl.text.trim(),
@@ -176,8 +239,102 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
         .showSnackBar(SnackBar(content: Text(msg)));
   }
 
+  bool _isVideoFile(File file) {
+    final path = file.path.toLowerCase();
+    return path.endsWith('.mp4') ||
+        path.endsWith('.mov') ||
+        path.endsWith('.avi') ||
+        path.endsWith('.mkv') ||
+        path.endsWith('.webm');
+  }
+
+  bool _isImageFile(File file) {
+    final path = file.path.toLowerCase();
+    return path.endsWith('.jpg') ||
+        path.endsWith('.jpeg') ||
+        path.endsWith('.png') ||
+        path.endsWith('.heic') ||
+        path.endsWith('.heif') ||
+        path.endsWith('.webp');
+  }
+
+  Widget _buildMediaPreview(File file) {
+    if (_isVideoFile(file)) {
+      return Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.videocam, color: Colors.white, size: 28),
+            SizedBox(height: 4),
+            Text(
+              'Video',
+              style: TextStyle(color: Colors.white, fontSize: 11),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_isImageFile(file)) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.file(
+          file,
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => Container(
+            width: 80,
+            height: 80,
+            color: Colors.grey.shade200,
+            alignment: Alignment.center,
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.broken_image_outlined, color: Colors.grey),
+                SizedBox(height: 4),
+                Text(
+                  'Preview error',
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: 80,
+      height: 80,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.insert_drive_file_outlined, color: Colors.grey),
+          SizedBox(height: 4),
+          Text(
+            'File',
+            style: TextStyle(fontSize: 11, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
       appBar: AppBar(
@@ -215,6 +372,45 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                   keyboardType: TextInputType.phone,
                   validator: (v) =>
                       (v == null || v.isEmpty) ? 'Phone is required' : null,
+                ),
+                const SizedBox(height: 22),
+              ] else if (auth.user != null) ...[
+                const _SectionTitle('Reporter'),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.person_outline, color: Color(0xFF1E88E5)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              auth.user!.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0D1B2A),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              auth.user!.email,
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 22),
               ],
@@ -301,7 +497,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                       Icon(Icons.add_photo_alternate_outlined,
                           size: 30, color: Colors.grey),
                       SizedBox(height: 6),
-                      Text('Tap to add photos/videos',
+                      Text('Tap to add photos or videos',
                           style: TextStyle(color: Colors.grey, fontSize: 13)),
                     ],
                   ),
@@ -319,8 +515,7 @@ class _SubmitReportScreenState extends State<SubmitReportScreen> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(_mediaFiles[i],
-                              width: 80, height: 80, fit: BoxFit.cover),
+                          child: _buildMediaPreview(_mediaFiles[i]),
                         ),
                         Positioned(
                           top: 2,

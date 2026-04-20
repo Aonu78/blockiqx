@@ -10,9 +10,13 @@ class ReportController extends Controller
 {
     public function store(Request $request)
     {
+        $authenticatedUser = $request->user()
+            ?? Auth::guard('sanctum')->user()
+            ?? Auth::guard('web')->user();
+
         $validatedData = $request->validate([
-            'email' => 'required_without:user_id|email',
-            'phone_number' => 'required_without:user_id|string',
+            'email' => $authenticatedUser ? 'nullable|email' : 'required|email',
+            'phone_number' => $authenticatedUser ? 'nullable|string' : 'required|string',
             'incident_type' => 'required|string',
             'description' => 'required|string',
             'location' => 'required|string',
@@ -31,10 +35,9 @@ class ReportController extends Controller
             $validatedData['media_paths'] = $mediaPaths;
         }
 
-        if (Auth::check()) {
-            $validatedData['user_id'] = Auth::id();
-        } else {
-            // Custom logic for guest users if needed
+        if ($authenticatedUser) {
+            $validatedData['user_id'] = $authenticatedUser->id;
+            $validatedData['email'] = $validatedData['email'] ?? $authenticatedUser->email;
         }
 
         $report = Report::create($validatedData);
