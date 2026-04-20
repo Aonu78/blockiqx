@@ -92,7 +92,7 @@ class AdminController extends Controller
     // API methods for fetching data
     public function getAllReports(Request $request)
     {
-        $query = Report::query();
+        $query = Report::with(['organization', 'assignedStaff', 'user']);
 
         // Apply filters if provided
         if ($request->has('status') && $request->status != 'all') {
@@ -115,10 +115,16 @@ class AdminController extends Controller
             $query->where('organization_id', $request->organization_id);
         }
 
-        // Select and fetch reports with coordinates and relevant details
-        $reports = $query->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')->get();
+        // Fetch reports
+        $reports = $query->latest()->get();
 
-        return response()->json($reports);
+        // Fetch all staff members to ensure assignment options are always available
+        $staff = Staff::all();
+
+        return response()->json([
+            'reports' => $reports,
+            'staff' => $staff
+        ]);
     }
 
     public function getReportsOverview()
@@ -146,7 +152,7 @@ class AdminController extends Controller
 
     public function getMapView(Request $request)
     {
-        $query = Report::query();
+        $query = Report::with(['organization', 'assignedStaff', 'user']);
 
         // Apply filters
         if ($request->has('status') && $request->status != 'all') {
@@ -169,12 +175,11 @@ class AdminController extends Controller
             $query->where('organization_id', $request->organization_id);
         }
 
-        // Select and fetch reports with coordinates and relevant details
-        $reports = $query->select('id', 'incident_type', 'location', 'latitude', 'longitude', 'status', 'description', 'category', 'concern_level', 'organization_id')
-            ->get();
+        // Fetch reports
+        $reports = $query->latest()->get();
 
-        // Fetch staff with their coordinates
-        $staff = Staff::select('id', 'name', 'location', 'organization_id', 'latitude', 'longitude')->get();
+        // Fetch staff with all fields
+        $staff = Staff::all();
 
         return response()->json([
             'reports' => $reports,
@@ -355,8 +360,25 @@ class AdminController extends Controller
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'organization_id' => 'nullable|exists:organizations,id',
-            'assigned_to' => 'nullable|exists:staff,id',
+            'staff_id' => 'nullable|exists:staff,id',
+            'note' => 'nullable|string',
         ]);
+
+        if (isset($validatedData['staff_id'])) {
+            $validatedData['assigned_to'] = $validatedData['staff_id'];
+            unset($validatedData['staff_id']);
+        }
+
+        if (isset($validatedData['note']) && !empty($validatedData['note'])) {
+            $notes = $report->notes ?? [];
+            $notes[] = [
+                'note' => $validatedData['note'],
+                'user' => ['name' => Auth::user()->name ?? 'Admin'],
+                'created_at' => now()->toIso8601String(),
+            ];
+            $report->notes = $notes;
+            unset($validatedData['note']);
+        }
 
         $report->update($validatedData);
 
