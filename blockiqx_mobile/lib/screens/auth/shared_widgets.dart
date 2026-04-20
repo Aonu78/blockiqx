@@ -62,6 +62,7 @@ class AnimatedField extends StatefulWidget {
   final bool obscure;
   final Widget? suffixIcon;
   final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
   final String? Function(String?)? validator;
 
   const AnimatedField({
@@ -73,6 +74,7 @@ class AnimatedField extends StatefulWidget {
     this.obscure = false,
     this.suffixIcon,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
     this.validator,
   });
 
@@ -133,6 +135,7 @@ class _AnimatedFieldState extends State<AnimatedField>
           controller: widget.controller,
           obscureText: widget.obscure,
           keyboardType: widget.keyboardType,
+          textCapitalization: widget.textCapitalization,
           validator: widget.validator,
           style: const TextStyle(color: Colors.white, fontSize: 14),
           decoration: InputDecoration(
