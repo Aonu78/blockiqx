@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class ReportController extends Controller
 {
@@ -42,7 +43,11 @@ class ReportController extends Controller
 
         $report = Report::create($validatedData);
 
-        broadcast(new \App\Events\ReportCreated($report))->toOthers();
+        try {
+            broadcast(new \App\Events\ReportCreated($report))->toOthers();
+        } catch (Throwable $exception) {
+            report($exception);
+        }
 
         return response()->json([
             'message' => 'Report created successfully',

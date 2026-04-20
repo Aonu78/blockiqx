@@ -964,7 +964,8 @@ class _ReportDetailSheetState extends State<_ReportDetailSheet> {
   void initState() {
     super.initState();
     _selectedStaffId = widget.report['assigned_to'];
-    _selectedStatus = widget.report['status'];
+    final initialStatus = widget.report['status']?.toString();
+    _selectedStatus = _statusOptions.contains(initialStatus) ? initialStatus : null;
   }
 
   @override
@@ -1135,7 +1136,7 @@ class _ReportDetailSheetState extends State<_ReportDetailSheet> {
                         style: TextStyle(fontWeight: FontWeight.w600)),
                     DropdownButtonFormField<String>(
                       value: _selectedStatus,
-                      items: _statusOptions
+                      items: _statusOptions.toSet().toList()
                           .map(
                               (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
