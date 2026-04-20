@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/reports', [ReportController::class, 'getUserReports']);
         Route::put('/reports/{report}', [ReportController::class, 'updateUserReport']);
     });
-    
+
     Route::prefix('staff')->group(function () {
         Route::get('/reports', [StaffControllerApi::class, 'getAssignedReports']);
         Route::get('/reports/{report}', [StaffControllerApi::class, 'getReportDetails']);
@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reports/{report}/assign', [AdminController::class, 'assignReport']);
         Route::put('/reports/{report}', [AdminController::class, 'updateReport']);
         Route::get('/analytics/reports-overview', [AdminController::class, 'getReportsOverview']);
-        Route::get('t/analytics/area-insights', [AdminController::class, 'getAreaInsights']);
+        Route::get('/analytics/area-insights', [AdminController::class, 'getAreaInsights']);
         Route::get('/analytics/map-view', [AdminController::class, 'getMapView']);
         Route::get('/analytics/outreach-performance', [AdminController::class, 'getOutreachPerformance']);
         Route::get('/users', [AdminController::class, 'getAllUsers']);
@@ -50,5 +50,3 @@ Route::middleware('auth:sanctum')->group(function () {
 // SSE Notifications endpoint (accessible to both session and API auth)
 Route::get('/notifications/stream', [\App\Http\Controllers\Api\NotificationStreamController::class, 'stream'])
     ->middleware(['auth:sanctum,web,staff']);
-
-
