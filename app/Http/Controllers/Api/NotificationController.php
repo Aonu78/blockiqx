@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
+        $user = $request->user()
+            ?? Auth::guard('sanctum')->user()
+            ?? Auth::guard('web')->user()
+            ?? Auth::guard('staff')->user();
 
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
@@ -34,7 +38,10 @@ class NotificationController extends Controller
 
     public function markAsRead(Request $request, DatabaseNotification $notification)
     {
-        $user = auth()->user();
+        $user = $request->user()
+            ?? Auth::guard('sanctum')->user()
+            ?? Auth::guard('web')->user()
+            ?? Auth::guard('staff')->user();
 
         if (!$user || (string) $notification->notifiable_id !== (string) $user->getKey() || $notification->notifiable_type !== get_class($user)) {
             return response()->json(['message' => 'Unauthorized'], 403);

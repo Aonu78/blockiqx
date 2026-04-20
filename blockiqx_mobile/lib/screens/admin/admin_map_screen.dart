@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../providers/notification_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
+import '../notifications_screen.dart';
 import '../auth/role_select_screen.dart';
 
 class AdminMapScreen extends StatefulWidget {
@@ -293,6 +295,7 @@ class _AdminMapScreenState extends State<AdminMapScreen>
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final adminName = auth.user?.name ?? 'Admin';
+    final unreadCount = context.watch<NotificationProvider>().unreadCount;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FA),
@@ -313,6 +316,41 @@ class _AdminMapScreenState extends State<AdminMapScreen>
           ],
         ),
         actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications, color: Colors.white70),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
+              ),
+              if (unreadCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.redAccent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      unreadCount > 9 ? '9+' : unreadCount.toString(),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           Stack(
             children: [
               IconButton(
