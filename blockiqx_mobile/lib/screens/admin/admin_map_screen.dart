@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../auth/role_select_screen.dart';
@@ -934,6 +935,20 @@ class _ReportDetailSheetState extends State<_ReportDetailSheet> {
     super.dispose();
   }
 
+  Future<void> _launchPhone(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch dialer for $phoneNumber')),
+      );
+    }
+  }
+
   bool get _hasChanges {
     return _selectedStaffId != widget.report['assigned_to'] ||
         _selectedStatus != widget.report['status'] ||
@@ -1052,6 +1067,14 @@ class _ReportDetailSheetState extends State<_ReportDetailSheet> {
                       title: 'Incident',
                       value: widget.report['incident_type'] ?? 'N/A',
                     ),
+                    if (widget.report['phone_number'] != null &&
+                        widget.report['phone_number'].isNotEmpty)
+                      _PhoneDetailRow(
+                        title: 'Phone',
+                        value: widget.report['phone_number'],
+                        onTap: () =>
+                            _launchPhone(widget.report['phone_number']),
+                      ),
                     _DetailRow(
                         title: 'Location',
                         value: widget.report['location'] ?? 'N/A'),
@@ -1201,6 +1224,38 @@ class _DetailRow extends StatelessWidget {
         children: [
           Text(title, style: TextStyle(color: Colors.grey[600])),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhoneDetailRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final VoidCallback onTap;
+  const _PhoneDetailRow(
+      {required this.title, required this.value, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: TextStyle(color: Colors.grey[600])),
+          GestureDetector(
+            onTap: onTap,
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
         ],
       ),
     );

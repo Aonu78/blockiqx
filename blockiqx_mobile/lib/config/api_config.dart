@@ -12,6 +12,9 @@ class ApiConfig {
   // ── Community / Guest ─────────────────────────────────────────────────────
   static String get submitReport => '$baseUrl/reports';
   static String get nearbyResources => '$baseUrl/reports/nearby';
+  static String get userReports => '$baseUrl/user/reports';
+  static String userReport(int id) => '$baseUrl/user/reports/$id';
+
 
   // ── Staff ─────────────────────────────────────────────────────────────────
   static String get staffReports => '$baseUrl/staff/reports';

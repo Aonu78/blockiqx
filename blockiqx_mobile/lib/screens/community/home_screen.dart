@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:blockiqx_mobile/screens/community/my_reports_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -131,43 +132,77 @@ class _CommunityHomeScreenState extends State<CommunityHomeScreen>
                   // ── Action cards ─────────────────────────────────
                   _animated(
                     2,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _ActionCard(
-                            icon: Icons.add_alert_outlined,
-                            label: 'Submit Report',
-                            subtitle: 'Report an incident',
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF1565C0), Color(0xFF1E88E5)],
-                            ),
-                            onTap: () => Navigator.push(
-                              context,
-                              _slideRoute(const SubmitReportScreen()),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: _ActionCard(
-                            icon: Icons.place_outlined,
-                            label: 'Nearby Help',
-                            subtitle: 'Find resources near you',
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(0xFF1B5E20), Color(0xFF43A047)],
-                            ),
-                            onTap: () => Navigator.push(
-                              context,
-                              _slideRoute(const NearbyResourcesScreen()),
+                    LayoutBuilder(builder: (context, constraints) {
+                      final width = (constraints.maxWidth - 14) / 2;
+                      return Wrap(
+                        spacing: 14,
+                        runSpacing: 14,
+                        children: [
+                          SizedBox(
+                            width: width,
+                            child: _ActionCard(
+                              icon: Icons.add_alert_outlined,
+                              label: 'Submit Report',
+                              subtitle: 'Report an incident',
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF1565C0),
+                                  Color(0xFF1E88E5)
+                                ],
+                              ),
+                              onTap: () => Navigator.push(
+                                context,
+                                _slideRoute(const SubmitReportScreen()),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
+                          SizedBox(
+                            width: width,
+                            child: _ActionCard(
+                              icon: Icons.place_outlined,
+                              label: 'Nearby Help',
+                              subtitle: 'Find resources near you',
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF1B5E20),
+                                  Color(0xFF43A047)
+                                ],
+                              ),
+                              onTap: () => Navigator.push(
+                                context,
+                                _slideRoute(const NearbyResourcesScreen()),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: width,
+                            child: _ActionCard(
+                              icon: Icons.history_outlined,
+                              label: 'My Reports',
+                              subtitle: 'View your submissions',
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color(0xFF6A1B9A),
+                                  Color(0xFF8E24AA)
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  _slideRoute(const MyReportsScreen()),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
                   ),
                   const SizedBox(height: 24),
 

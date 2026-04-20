@@ -206,6 +206,70 @@ class ApiService {
     }
   }
 
+  /// GET /api/user/reports
+  static Future<List<dynamic>> getUserReports(String token) async {
+    try {
+      final response = await http
+          .get(Uri.parse(ApiConfig.userReports),
+              headers: ApiConfig.headers(token))
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data is List) return data;
+        if (data is Map && data['data'] != null) return data['data'];
+        return [];
+      }
+      throw ApiException('Failed to fetch user reports.',
+          statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
+  /// PUT /api/user/reports/{id}
+  static Future<Map<String, dynamic>> updateUserReport(
+    String token,
+    int reportId, {
+    required String incidentType,
+    required String description,
+    required String location,
+    double? latitude,
+    double? longitude,
+  }) async {
+    try {
+      final body = {
+        'incident_type': incidentType,
+        'description': description,
+        'location': location,
+        'latitude': latitude,
+        'longitude': longitude,
+      };
+
+      final response = await http
+          .put(
+            Uri.parse(ApiConfig.userReport(reportId)),
+            headers: ApiConfig.jsonHeaders(token),
+            body: jsonEncode(body),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      final data = _decode(response);
+      if (response.statusCode == 200) return data;
+      throw ApiException(data['message'] ?? 'Failed to update report.',
+          statusCode: response.statusCode);
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Cannot connect to server. Check your API URL.');
+    }
+  }
+
+
   // ─── STAFF ────────────────────────────────────────────────────────────────
 
   /// GET /api/staff/reports

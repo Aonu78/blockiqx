@@ -25,11 +25,18 @@ dependencies:
   file_picker: ^8.1.2
   google_maps_flutter: ^2.6.0
   flutter_polyline_points: ^3.1.0
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
 
 flutter:
   uses-material-design: true

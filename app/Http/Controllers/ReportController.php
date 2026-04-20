@@ -70,4 +70,33 @@ class ReportController extends Controller
 
         return response()->json($resources);
     }
+
+    public function getUserReports(Request $request)
+    {
+        $reports = Report::where('user_id', $request->user()->id)->get();
+        return response()->json($reports);
+    }
+
+    public function updateUserReport(Request $request, Report $report)
+    {
+        if ($request->user()->id !== $report->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($report->status !== 'Pending') {
+            return response()->json(['message' => 'This report can no longer be edited.'], 403);
+        }
+
+        $validatedData = $request->validate([
+            'incident_type' => 'required|string',
+            'description' => 'required|string',
+            'location' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+
+        $report->update($validatedData);
+
+        return response()->json($report);
+    }
 }

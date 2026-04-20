@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/report.dart';
 import '../../providers/auth_provider.dart';
@@ -120,6 +121,20 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
     }
   }
 
+  Future<void> _launchPhone(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch dialer for $phoneNumber')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,6 +181,8 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
                   _card("Incident", [
                     _row("Type", _report.incidentType),
                     _row("Status", _report.status),
+                    if (_report.phoneNumber != null && _report.phoneNumber!.isNotEmpty)
+                      _phoneRow("Phone", _report.phoneNumber!),
                   ]),
 
                   /// DESCRIPTION
@@ -265,6 +282,30 @@ class _ReportDetailScreenState extends State<ReportDetailScreen> {
           Text("$k: ",
               style: const TextStyle(fontWeight: FontWeight.bold)),
           Expanded(child: Text(v)),
+        ],
+      ),
+    );
+  }
+
+  Widget _phoneRow(String k, String v) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Text("$k: ",
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _launchPhone(v),
+              child: Text(
+                v,
+                style: const TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

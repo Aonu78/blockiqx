@@ -16,6 +16,11 @@ Route::post('/reports', [ReportController::class, 'store']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/reports/nearby', [ReportController::class, 'getNearbyResources']);
+
+    Route::prefix('user')->group(function () {
+        Route::get('/reports', [ReportController::class, 'getUserReports']);
+        Route::put('/reports/{report}', [ReportController::class, 'updateUserReport']);
+    });
     
     Route::prefix('staff')->group(function () {
         Route::get('/reports', [StaffControllerApi::class, 'getAssignedReports']);
