@@ -1,12 +1,19 @@
 <div class="row">
     <div class="col-12">
-        <div class="card mb-4 mx-4">
+            <div class="card mb-4 mx-4">
             <div class="card-header pb-0">
                 <div class="d-flex flex-row justify-content-between">
                     <div>
                         <h5 class="mb-0">All Users</h5>
                     </div>
-                    <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button">+&nbsp; New User</a>
+                    <button
+                        type="button"
+                        class="btn bg-gradient-primary btn-sm mb-0"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createUserModal"
+                    >
+                        +&nbsp; New User
+                    </button>
                 </div>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
@@ -123,6 +130,68 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Create New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.users.create') }}" method="POST">
+                @csrf
+                <div class="modal-body text-start">
+                    <div class="form-group">
+                        <label for="createUserName">Name</label>
+                        <input
+                            id="createUserName"
+                            type="text"
+                            class="form-control"
+                            name="name"
+                            value="{{ old('name') }}"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="createUserEmail">Email</label>
+                        <input
+                            id="createUserEmail"
+                            type="email"
+                            class="form-control"
+                            name="email"
+                            value="{{ old('email') }}"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="createUserPassword">Password</label>
+                        <input
+                            id="createUserPassword"
+                            type="password"
+                            class="form-control"
+                            name="password"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="createUserPasswordConfirmation">Confirm Password</label>
+                        <input
+                            id="createUserPasswordConfirmation"
+                            type="password"
+                            class="form-control"
+                            name="password_confirmation"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn bg-gradient-primary">Create User</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
